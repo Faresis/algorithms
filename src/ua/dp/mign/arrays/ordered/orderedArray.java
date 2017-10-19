@@ -5,6 +5,9 @@ package ua.dp.mign.arrays.ordered;
 // to run this program: C>java OrderedApp
 ////////////////////////////////////////////////////////////////
 class OrdArray {
+
+    private static final SearchArrayPredicate EQUAL = (arr, ind, key) -> arr[ind] == key;
+
     private long[] a;                 // ref to array a
     private int nElems;               // number of data items
 
@@ -22,22 +25,26 @@ class OrdArray {
 
     //-----------------------------------------------------------
     public int find(long searchKey) {
+        return findIndex(searchKey, EQUAL);
+    }
+
+    private int findIndex(long searchKey, SearchArrayPredicate p) {
         int lowerBound = 0;
         int upperBound = nElems - 1;
         int curIn;
 
         while (true) {
             curIn = (lowerBound + upperBound) / 2;
-            if (a[curIn] == searchKey)
+            if (p.test(a, curIn, searchKey))
                 return curIn;              // found it
             else if (lowerBound > upperBound)
                 return nElems;             // can't find it
             else                          // divide range
             {
-                if (a[curIn] < searchKey)
-                    lowerBound = curIn + 1; // it's in upper half
-                else
+                if (a[curIn] > searchKey)
                     upperBound = curIn - 1; // it's in lower half
+                else
+                    lowerBound = curIn + 1; // it's in upper half
             }  // end else divide range
         }  // end while
     }  // end find()
@@ -97,6 +104,8 @@ class OrderedApp {
         arr.insert(66);
         arr.insert(33);
 
+        arr.display();
+
         int searchKey = 55;            // search for item
         if (arr.find(searchKey) != arr.size())
             System.out.println("Found " + searchKey);
@@ -105,10 +114,17 @@ class OrderedApp {
 
         arr.display();                 // display items
 
+        System.out.println("Removing 00, 55, 99.");
         arr.delete(00);                // delete 3 items
         arr.delete(55);
         arr.delete(99);
 
         arr.display();                 // display items again
     }  // end main()
+
 }  // end class OrderedApp
+
+@FunctionalInterface
+interface SearchArrayPredicate {
+    boolean test(long[] array, int currentIndex, long searchKey);
+}
