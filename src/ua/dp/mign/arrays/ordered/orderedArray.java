@@ -6,7 +6,9 @@ package ua.dp.mign.arrays.ordered;
 ////////////////////////////////////////////////////////////////
 class OrdArray {
 
-    private static final SearchArrayPredicate EQUAL = (arr, ind, key) -> arr[ind] == key;
+    private static final SearchArrayPredicate EQUAL = (arr, idx, key) -> arr[idx] == key;
+    private static final SearchArrayPredicate FIRST_BIGGER = (arr, idx, key) ->
+            arr[idx] > key && (idx == 0 || arr[idx - 1] <= key);
 
     private long[] a;                 // ref to array a
     private int nElems;               // number of data items
@@ -52,10 +54,7 @@ class OrdArray {
     //-----------------------------------------------------------
     public void insert(long value)    // put element into array
     {
-        int j;
-        for (j = 0; j < nElems; j++)        // find where it goes
-            if (a[j] > value)            // (linear search)
-                break;
+        int j = findIndex(value, FIRST_BIGGER);
         for (int k = nElems; k > j; k--)    // move bigger ones up
             a[k] = a[k - 1];
         a[j] = value;                  // insert it
