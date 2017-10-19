@@ -11,8 +11,32 @@ class HighArray {
     //-----------------------------------------------------------
     public HighArray(int max)         // constructor
     {
-        a = new long[max];                 // create the array
-        nElems = 0;                        // no items yet
+        a = new long[max];             // create the array
+        nElems = 0;                    // no items yet
+    }
+
+    //-----------------------------------------------------------
+    public long getMax() {
+        int max = findMax();
+        return max >= 0 ? a[max] : max;
+    }
+
+    //-----------------------------------------------------------
+    public long removeMax() {
+        int max = findMax();
+        return max >= 0 ? delete(max) : max;
+    }
+
+    //-----------------------------------------------------------
+    private int findMax() {
+        if (a.length == 0)
+            return -1;
+
+        int max = 0;                      // init default value
+        for (int j = 1; j < nElems; j++)     // traverse all elements
+            if (a[j] > a[max])           // compare with max
+                max = j;                  // take bigger one
+        return max;                     // return found
     }
 
     //-----------------------------------------------------------
@@ -44,12 +68,22 @@ class HighArray {
             return false;
         else                           // found it
         {
-            for (int k = j; k < nElems; k++) // move higher ones down
-                a[k] = a[k + 1];
-            nElems--;                   // decrement size
+            delete(j);
             return true;
         }
-    }  // end delete()
+    }
+
+    //-----------------------------------------------------------
+    private long delete(int index) {
+        if (index < 0 || index >= nElems)
+            return -1;
+
+        long result = a[index];
+        for (int k = index; k < nElems; k++) // move higher ones down
+            a[k] = a[k + 1];
+        nElems--;                       // decrement size
+        return result;
+    }
 
     //-----------------------------------------------------------
     public void display()             // displays array contents
@@ -57,6 +91,11 @@ class HighArray {
         for (int j = 0; j < nElems; j++)       // for each element,
             System.out.print(a[j] + " ");  // display it
         System.out.println("");
+    }
+
+    //-----------------------------------------------------------
+    public int size() {
+        return nElems;
     }
     //-----------------------------------------------------------
 }  // end class HighArray
@@ -67,6 +106,9 @@ class HighArrayApp {
         int maxSize = 100;            // array size
         HighArray arr;                // reference to array
         arr = new HighArray(maxSize); // create the array
+
+        System.out.println("Max value for empty array is: " + arr.getMax());
+        System.out.println("Deleting max is: " + arr.removeMax());
 
         arr.insert(77);               // insert 10 items
         arr.insert(99);
@@ -81,6 +123,8 @@ class HighArrayApp {
 
         arr.display();                // display items
 
+        System.out.println("Max value after insertion: " + arr.getMax());
+
         int searchKey = 35;           // search for item
         if (arr.find(searchKey))
             System.out.println("Found " + searchKey);
@@ -92,5 +136,13 @@ class HighArrayApp {
         arr.delete(99);
 
         arr.display();                // display items again
+
+        System.out.println("Max value after deletion: " + arr.getMax());
+        System.out.println("Removing max: " + arr.removeMax());
+        System.out.println("Max value after second deletion: " + arr.getMax());
+        HighArray sorted = new HighArray(arr.size());
+        while (arr.size() > 0)
+            sorted.insert(arr.removeMax());
+        sorted.display();
     }  // end main()
 }  // end class HighArrayApp
