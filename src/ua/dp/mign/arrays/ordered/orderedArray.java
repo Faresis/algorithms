@@ -14,6 +14,11 @@ class OrdArray {
     private int nElems;               // number of data items
 
     //-----------------------------------------------------------
+    private OrdArray(long[] source) {
+        a = source.clone();
+        nElems = source.length;
+    }
+    //-----------------------------------------------------------
     public OrdArray(int max)          // constructor
     {
         a = new long[max];             // create array
@@ -83,6 +88,36 @@ class OrdArray {
         System.out.println("");
     }
     //-----------------------------------------------------------
+    public static OrdArray merge(OrdArray a, OrdArray b) {
+        long[] result = new long[a.size() + b.size()];
+        int firstIdx = 0;
+        int secondIdx = 0;
+        int curElem = 0;
+        while (firstIdx < a.size() || secondIdx < b.size()) {
+            if (firstIdx < a.size() && secondIdx < b.size()) {
+                long firstVal = a.a[firstIdx];
+                long secondVal = b.a[secondIdx];
+                if (firstVal <= secondVal) {
+                    result[curElem] = firstVal;
+                    firstIdx++;
+                } else {
+                    result[curElem] = secondVal;
+                    secondIdx++;
+                }
+            } else if (firstIdx < a.size()) {
+                long firstVal = a.a[firstIdx];
+                result[curElem] = firstVal;
+                firstIdx++;
+            } else if (secondIdx < b.size()) {
+                long secondVal = b.a[secondIdx];
+                result[curElem] = secondVal;
+                secondIdx++;
+            }
+            curElem++;
+        }
+        return new OrdArray(result);
+    }
+    //-----------------------------------------------------------
 }  // end class OrdArray
 
 ////////////////////////////////////////////////////////////////
@@ -104,6 +139,27 @@ class OrderedApp {
         arr.insert(33);
 
         arr.display();
+
+        OrdArray brr = new OrdArray(maxSize);
+
+        brr.insert(14);
+        brr.insert(71);
+        brr.insert(15);
+        brr.insert(25);
+        brr.insert(43);
+        brr.insert(68);
+        brr.insert(87);
+        brr.insert(23);
+        brr.insert(21);
+        brr.insert(65);
+        brr.insert(39);
+        brr.insert(81);
+
+        brr.display();
+
+        OrdArray merge = OrdArray.merge(arr, brr);
+
+        merge.display();
 
         int searchKey = 55;            // search for item
         if (arr.find(searchKey) != arr.size())
