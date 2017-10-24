@@ -98,6 +98,33 @@ class HighArray {
         return nElems;
     }
     //-----------------------------------------------------------
+    public void noDups() {
+        int numRemoved = 0;
+        for (int i = 0; i < nElems; i++) {
+            if (a[i] == -1) {
+                continue;
+            }
+            for (int j = i + 1; j < nElems; j++) {
+                if (a[j] == a[i]) {
+                    a[j] = -1;
+                    numRemoved++;
+                }
+            }
+        }
+        for (int i = 0; i < nElems; i++) {
+            if (a[i] == -1) {
+                int shift = -1;
+                for (int j = i + 1; j < nElems; j++) {
+                    if (a[j] == -1) {
+                        shift--;
+                        continue;
+                    }
+                    a[j + shift] = a[j];
+                }
+            }
+        }
+        nElems = nElems - numRemoved;
+    }
 }  // end class HighArray
 
 ////////////////////////////////////////////////////////////////
@@ -111,17 +138,37 @@ class HighArrayApp {
         System.out.println("Deleting max is: " + arr.removeMax());
 
         arr.insert(77);               // insert 10 items
+        arr.insert(44);
+        arr.insert(77);
+        arr.insert(88);
+        arr.insert(99);
+        arr.insert(77);
+        arr.insert(99);
         arr.insert(99);
         arr.insert(44);
-        arr.insert(55);
         arr.insert(22);
+        arr.insert(55);
+        arr.insert(88);
+        arr.insert(22);
+        arr.insert(99);
+        arr.insert(22);
+        arr.insert(88);
+        arr.insert(99);
         arr.insert(88);
         arr.insert(11);
         arr.insert(00);
         arr.insert(66);
+        arr.insert(88);
+        arr.insert(66);
         arr.insert(33);
 
-        arr.display();                // display items
+        System.out.println("With duplicates: ");
+        arr.display();                // display items with duplicates
+
+        arr.noDups();
+
+        System.out.println("Without duplicates: ");
+        arr.display();                // display items without duplicates
 
         System.out.println("Max value after insertion: " + arr.getMax());
 
