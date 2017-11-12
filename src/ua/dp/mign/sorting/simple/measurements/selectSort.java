@@ -69,6 +69,12 @@ class SelectSortApp {
         fillRandomly(maxSize, random);
         System.out.println("Random data.");
         measure(random);
+
+        // sorted data
+        ArraySel sortedData = new ArraySel(maxSize);
+        fillSorted(maxSize, sortedData);
+        System.out.println("Sorted data.");
+        measure(sortedData);
     }  // end main()
 
     private static void fillInversely(int maxSize, ArraySel inverse) {
@@ -82,6 +88,12 @@ class SelectSortApp {
             // random numbers
             long n = (long) (Math.random() * (maxSize - 1));
             random.insert(n);
+        }
+    }
+
+    private static void fillSorted(int maxSize, ArraySel sorted) {
+        for (int i = 0; i < maxSize; i++) {
+            sorted.insert(i);
         }
     }
 

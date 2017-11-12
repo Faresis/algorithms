@@ -66,6 +66,11 @@ class BubbleSortApp {
         System.out.println("Random data.");
         measure(random);
 
+        // sorted data
+        ArrayBub sortedData = new ArrayBub(maxSize);
+        fillSorted(maxSize, sortedData);
+        System.out.println("Sorted data.");
+        measure(sortedData);
     }  // end main()
 
     private static void fillInversely(int maxSize, ArrayBub inverse) {
@@ -79,6 +84,12 @@ class BubbleSortApp {
             // random numbers
             long n = (long) (Math.random() * (maxSize - 1));
             random.insert(n);
+        }
+    }
+
+    private static void fillSorted(int maxSize, ArrayBub sorted) {
+        for (int i = 0; i < maxSize; i++) {
+            sorted.insert(i);
         }
     }
 
