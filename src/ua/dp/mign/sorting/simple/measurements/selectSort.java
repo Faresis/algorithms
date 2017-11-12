@@ -57,20 +57,40 @@ class ArraySel {
 class SelectSortApp {
     public static void main(String[] args) {
         int maxSize = 100_000;            // array size
-        ArraySel arr;                 // reference to array
-        arr = new ArraySel(maxSize);  // create the array
 
+        // inverse data
+        ArraySel inverse = new ArraySel(maxSize);
+        fillInversely(maxSize, inverse);
+        System.out.println("Inverse data.");
+        measure(inverse);
+
+        // random data
+        ArraySel random = new ArraySel(maxSize);  // create the array
+        fillRandomly(maxSize, random);
+        System.out.println("Random data.");
+        measure(random);
+    }  // end main()
+
+    private static void fillInversely(int maxSize, ArraySel inverse) {
+        for (int i = maxSize; i > 0; --i) {
+            inverse.insert(i);
+        }
+    }
+
+    private static void fillRandomly(int maxSize, ArraySel random) {
         for (int j = 0; j < maxSize; j++) { // fill array with
             // random numbers
-            long n = (long) (java.lang.Math.random() * (maxSize - 1));
-            arr.insert(n);
+            long n = (long) (Math.random() * (maxSize - 1));
+            random.insert(n);
         }
+    }
 
+    private static void measure(ArraySel arr) {
         long start = System.nanoTime();
         arr.selectionSort();   // sort them
         long end = System.nanoTime();
 
-        System.out.printf("Time elapsed: %d milliseconds.\n", (end - start) / 1_000_000);                // display them again
-    }  // end main()
+        System.out.printf("Time elapsed: %d milliseconds.\n", (end - start) / 1_000_000);
+    }
 }  // end class SelectSortApp
 ////////////////////////////////////////////////////////////////

@@ -53,19 +53,38 @@ class ArrayIns {
 class InsertSortApp {
     public static void main(String[] args) {
         int maxSize = 100_000;            // array size
-        ArrayIns arr;                 // reference to array
-        arr = new ArrayIns(maxSize);  // create the array
+        // inverse data
+        ArrayIns inverse = new ArrayIns(maxSize);
+        fillInversely(maxSize, inverse);
+        System.out.println("Inverse data.");
+        measure(inverse);
 
+        // random data
+        ArrayIns random = new ArrayIns(maxSize);  // create the array
+        fillRandomly(maxSize, random);
+        System.out.println("Random data.");
+        measure(random);
+    }  // end main()
+
+    private static void fillInversely(int maxSize, ArrayIns inverse) {
+        for (int i = maxSize; i > 0; --i) {
+            inverse.insert(i);
+        }
+    }
+
+    private static void fillRandomly(int maxSize, ArrayIns random) {
         for (int j = 0; j < maxSize; j++) { // fill array with
             // random numbers
-            long n = (long) (java.lang.Math.random() * (maxSize - 1));
-            arr.insert(n);
+            long n = (long) (Math.random() * (maxSize - 1));
+            random.insert(n);
         }
+    }
 
+    private static void measure(ArrayIns arr) {
         long start = System.nanoTime();
         arr.insertionSort();   // sort them
         long end = System.nanoTime();
 
         System.out.printf("Time elapsed: %d milliseconds.\n", (end - start) / 1_000_000);
-    }  // end main()
+    }
 }  // end class InsertSortApp
