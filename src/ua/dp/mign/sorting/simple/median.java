@@ -42,6 +42,20 @@ class ArrayIns {
             a[in] = temp;                  // insert marked item
         }  // end for
     }  // end insertionSort()
+
+    public long median() {
+        ArrayIns clone = new ArrayIns(a.length);
+        clone.a = this.a.clone();
+        clone.nElems = this.nElems;
+
+        clone.insertionSort();
+
+        if (clone.nElems % 2 == 0) {
+            return (clone.a[clone.nElems / 2] + clone.a[clone.nElems / 2 - 1]) / 2;
+        } else {
+            return clone.a[clone.nElems / 2];
+        }
+    }
 //--------------------------------------------------------------
 }  // end class ArrayIns
 
@@ -65,8 +79,14 @@ class InsertSortApp {
 
         arr.display();                // display items
 
+        System.out.println("Median: " + arr.median());
+
+        arr.display();                // display items
+
         arr.insertionSort();          // insertion-sort them
 
         arr.display();                // display them again
+
+        System.out.println("Median: " + arr.median());
     }  // end main()
 }  // end class InsertSortApp
