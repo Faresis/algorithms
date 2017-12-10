@@ -28,12 +28,24 @@ class ArrayBub {
 
     //--------------------------------------------------------------
     public void bubbleSort() {
-        int out, in;
+        int left, right, in;
 
-        for (out = nElems - 1; out > 1; out--)   // outer loop (backward)
-            for (in = 0; in < out; in++)        // inner loop (forward)
-                if (a[in] > a[in + 1])       // out of order?
-                    swap(in, in + 1);          // swap them
+        left = 0;
+        right = nElems - 1;
+        while (right > left) {
+            for (in = left; in < right; in++) {
+                if (a[in] > a[in + 1]) {
+                    swap(in, in + 1);
+                }
+            }
+            right--;
+            for (in = right; in > left; in--) {
+                if (a[in] < a[in - 1]) {
+                    swap(in, in - 1);
+                }
+            }
+            left++;
+        }
     }  // end bubbleSort()
 
     //--------------------------------------------------------------
