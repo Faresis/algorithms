@@ -99,31 +99,25 @@ class HighArray {
     }
     //-----------------------------------------------------------
     public void noDups() {
-        int numRemoved = 0;
-        for (int i = 0; i < nElems; i++) {
-            if (a[i] == -1) {
-                continue;
-            }
-            for (int j = i + 1; j < nElems; j++) {
+        for (int i = 1; i < nElems; i++) {
+            for (int j = i - 1; j >= 0; j--) {
                 if (a[j] == a[i]) {
                     a[j] = -1;
-                    numRemoved++;
+                    break;
                 }
             }
         }
+        int shift = 0;
         for (int i = 0; i < nElems; i++) {
-            if (a[i] == -1) {
-                int shift = -1;
-                for (int j = i + 1; j < nElems; j++) {
-                    if (a[j] == -1) {
-                        shift--;
-                        continue;
-                    }
-                    a[j + shift] = a[j];
-                }
+            if (a[i] < 0) {
+                shift--;
+                continue;
+            }
+            if (shift < 0) {
+                a[i + shift] = a[i];
             }
         }
-        nElems = nElems - numRemoved;
+        nElems += shift;
     }
 }  // end class HighArray
 
@@ -138,10 +132,15 @@ class HighArrayApp {
         System.out.println("Deleting max is: " + arr.removeMax());
 
         arr.insert(77);               // insert 10 items
+        arr.insert(77);
         arr.insert(44);
         arr.insert(77);
         arr.insert(88);
         arr.insert(99);
+        arr.insert(77);
+        arr.insert(77);
+        arr.insert(77);
+        arr.insert(77);
         arr.insert(77);
         arr.insert(99);
         arr.insert(99);

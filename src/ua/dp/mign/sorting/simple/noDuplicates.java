@@ -42,11 +42,25 @@ class NoDupsArray {
             a[in] = temp;                  // insert marked item
         }  // end for
     }  // end insertionSort()
+
+    public void noDups() {
+        int shift = 0;
+        for (int i = 1; i < nElems; i++) {
+            if (a[i - 1] == a[i]) {
+                shift--;
+                continue;
+            }
+            if (shift < 0) {
+                a[i + shift] = a[i];
+            }
+        }
+        nElems += shift;
+    }
 //--------------------------------------------------------------
 }  // end class ArrayIns
 
 ////////////////////////////////////////////////////////////////
-class INoDupsArraypp {
+class NoDupsArraypp {
     public static void main(String[] args) {
         int maxSize = 100;            // array size
         NoDupsArray arr;                 // reference to array
@@ -62,11 +76,15 @@ class INoDupsArraypp {
         arr.insert(55);
         arr.insert(55);
         arr.insert(77);
+        arr.insert(77);
         arr.insert(22);
         arr.insert(99);
         arr.insert(88);
         arr.insert(11);
         arr.insert(11);
+        arr.insert(00);
+        arr.insert(00);
+        arr.insert(00);
         arr.insert(00);
         arr.insert(66);
         arr.insert(33);
@@ -77,5 +95,9 @@ class INoDupsArraypp {
         arr.insertionSort();          // insertion-sort them
 
         arr.display();                // display them again
+
+        arr.noDups();
+
+        arr.display();
     }  // end main()
 }  // end class InsertSortApp
