@@ -27,20 +27,25 @@ class ArrayInsCounting {
     }
 
     //--------------------------------------------------------------
-    public void insertionSort() {
+    public Stat insertionSort() {
         int in, out;
+
+        int copies = 0, comparisons = 0;
 
         for (out = 1; out < nElems; out++)     // out is dividing line
         {
             long temp = a[out];            // remove marked item
+
             in = out;                      // start shifts at out
-            while (in > 0 && a[in - 1] >= temp) // until one is smaller,
+            while (in > 0 && ++comparisons > 0 && a[in - 1] >= temp) // until one is smaller,
             {
                 a[in] = a[in - 1];            // shift item to right
                 --in;                       // go left one position
+                copies++;
             }
             a[in] = temp;                  // insert marked item
         }  // end for
+        return new Stat(copies, comparisons);
     }  // end insertionSort()
 //--------------------------------------------------------------
 }  // end class ArrayIns
@@ -49,8 +54,8 @@ class ArrayInsCounting {
 class InsertSortCountingApp {
     public static void main(String[] args) {
         int maxSize = 100;            // array size
-        ArrayIns arr;                 // reference to array
-        arr = new ArrayIns(maxSize);  // create the array
+        ArrayInsCounting arr;                 // reference to array
+        arr = new ArrayInsCounting(maxSize);  // create the array
 
         arr.insert(77);               // insert 10 items
         arr.insert(99);
@@ -62,11 +67,53 @@ class InsertSortCountingApp {
         arr.insert(00);
         arr.insert(66);
         arr.insert(33);
-
         arr.display();                // display items
-
-        arr.insertionSort();          // insertion-sort them
-
+        Stat stat = arr.insertionSort();          // insertion-sort them
         arr.display();                // display them again
+        System.out.println(stat);
+        arr.insert(55);
+        arr.display();
+        stat = arr.insertionSort();
+        arr.display();
+        System.out.println(stat);
+
+        arr = new ArrayInsCounting(maxSize);
+        arr.insert(99);
+        arr.insert(88);
+        arr.insert(77);
+        arr.insert(66);
+        arr.insert(55);
+        arr.insert(44);
+        arr.insert(33);
+        arr.insert(22);
+        arr.insert(11);
+        arr.insert(00);
+        arr.display();
+        stat = arr.insertionSort();
+        arr.display();
+        System.out.println(stat);
     }  // end main()
 }  // end class InsertSortApp
+
+final class Stat {
+    private final int copies;
+    private final int comparisons;
+
+    Stat(int copies, int comparisons) {
+        this.copies = copies;
+        this.comparisons = comparisons;
+    }
+
+    public int getCopies() {
+        return copies;
+    }
+
+    public int getComparisons() {
+        return comparisons;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Copies: %d, Comparisons: %d", copies, comparisons);
+    }
+}
