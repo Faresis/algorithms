@@ -37,6 +37,28 @@ class ArrayOddEven {
                     swap(in, in + 1);          // swap them
     }  // end bubbleSort()
 
+    public void oddEvenSort() {
+        while (true) {
+            boolean swapped = false;
+            for (int i = 1; i < nElems - 1; i += 2) {
+                if (a[i] > a[i + 1]) {
+                    swap(i, i + 1);
+                    swapped = true;
+                }
+            }
+            for (int i = 0; i < nElems - 1; i += 2) {
+                if (a[i] > a[i + 1]) {
+                    swap(i, i + 1);
+                    swapped = true;
+                }
+            }
+
+            if (!swapped) {
+                break;
+            }
+        }
+    }
+
     //--------------------------------------------------------------
     private void swap(int one, int two) {
         long temp = a[one];
@@ -66,7 +88,7 @@ class OddEvenSortApp {
 
         arr.display();                // display items
 
-        arr.bubbleSort();             // bubble sort them
+        arr.oddEvenSort();             // bubble sort them
 
         arr.display();                // display them again
     }  // end main()
