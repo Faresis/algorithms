@@ -4,8 +4,8 @@ package ua.dp.mign.queues;
 class QueueToDequeue {
     private int maxSize;
     private long[] queArray;
-    private int front;
-    private int rear;
+    private int left;
+    private int right;
     private int nItems;
 
     //--------------------------------------------------------------
@@ -13,34 +13,51 @@ class QueueToDequeue {
     {
         maxSize = s;
         queArray = new long[maxSize];
-        front = 0;
-        rear = -1;
+        left = 0;
+        right = -1;
         nItems = 0;
     }
 
     //--------------------------------------------------------------
-    public void insert(long j)   // put item at rear of queue
+    public void insertRight(long j)   // put item at right of queue
     {
-        if (rear == maxSize - 1)         // deal with wraparound
-            rear = -1;
-        queArray[++rear] = j;         // increment rear and insert
+        if (right == maxSize - 1)         // deal with wraparound
+            right = -1;
+        queArray[++right] = j;         // increment right and insert
         nItems++;                     // one more item
     }
 
+    public void insertLeft(long j) {
+        if (--left < 0) {
+            left = maxSize - 1;
+        }
+        queArray[left] = j;
+        nItems++;
+    }
+
     //--------------------------------------------------------------
-    public long remove()         // take item from front of queue
+    public long removeLeft()         // take item from left of queue
     {
-        long temp = queArray[front++]; // get value and incr front
-        if (front == maxSize)           // deal with wraparound
-            front = 0;
+        long temp = queArray[left++]; // get value and incr left
+        if (left == maxSize)           // deal with wraparound
+            left = 0;
         nItems--;                      // one less item
         return temp;
     }
 
+    public long removeRight() {
+        long temp = queArray[right--];
+        if (right < 0) {
+            right = maxSize - 1;
+        }
+        nItems--;
+        return temp;
+    }
+
     //--------------------------------------------------------------
-    public long peekFront()      // peek at front of queue
+    public long peekFront()      // peek at left of queue
     {
-        return queArray[front];
+        return queArray[left];
     }
 
     //--------------------------------------------------------------
@@ -63,7 +80,7 @@ class QueueToDequeue {
 
     public void display() {
         int count = nItems;
-        int pos = front;
+        int pos = left;
         if (count == 0) {
             System.out.println("The queue is empty.");
         } else {
@@ -87,31 +104,38 @@ class QueueToDequeueApp {
     public static void main(String[] args) {
         QueueToDequeue theQueue = new QueueToDequeue(5);  // queue holds 5 items
 
-        theQueue.insert(10);            // insert 4 items
-        theQueue.insert(20);
-        theQueue.insert(30);
-        theQueue.insert(40);
+        theQueue.insertRight(10);            // insert 4 items
+        theQueue.insertRight(20);
+        theQueue.insertRight(30);
+        theQueue.insertLeft(40);
 
         theQueue.display();
 
-        theQueue.remove();              // remove 3 items
-        theQueue.remove();              //    (10, 20, 30)
-        theQueue.remove();
+        theQueue.removeLeft();              // remove 3 items
+        theQueue.removeLeft();              //    (10, 20, 30)
+        theQueue.removeLeft();
 
         theQueue.display();
 
-        theQueue.insert(50);            // insert 4 more items
-        theQueue.insert(60);            //    (wraps around)
-        theQueue.insert(70);
-        theQueue.insert(80);
+        theQueue.insertRight(50);            // insert 4 more items
+        theQueue.insertRight(60);            //    (wraps around)
+        theQueue.insertRight(70);
+        theQueue.insertLeft(80);
 
         theQueue.display();
 
+        int cnt = 0;
         while (!theQueue.isEmpty())    // remove and display
         {                            //    all items
-            long n = theQueue.remove();  // (40, 50, 60, 70, 80)
+            long n;
+            if (cnt % 2 == 0) {
+                n = theQueue.removeLeft();
+            } else {
+                n = theQueue.removeRight();
+            }
             System.out.print(n);
             System.out.print(" ");
+            cnt++;
         }
         System.out.println("");
 
