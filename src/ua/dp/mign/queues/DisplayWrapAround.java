@@ -59,6 +59,25 @@ class DisplayWrapAroundQueue {
     {
         return nItems;
     }
+
+    public void display() {
+        int count = nItems;
+        int pos = front;
+        if (count == 0) {
+            System.out.println("The queue is empty.");
+        } else {
+            System.out.print("[\t");
+            while (count > 0) {
+                System.out.printf("%d\t", queArray[pos++]);
+                if (pos == maxSize) {
+                    pos = 0;
+                }
+                count--;
+            }
+            System.out.print("]");
+            System.out.println();
+        }
+    }
 //--------------------------------------------------------------
 }  // end class DisplayWrapAroundQueue
 
@@ -72,14 +91,20 @@ class DisplayWrapAroundApp {
         theDisplayWrapAroundQueue.insert(30);
         theDisplayWrapAroundQueue.insert(40);
 
+        theDisplayWrapAroundQueue.display();
+
         theDisplayWrapAroundQueue.remove();              // remove 3 items
         theDisplayWrapAroundQueue.remove();              //    (10, 20, 30)
         theDisplayWrapAroundQueue.remove();
+
+        theDisplayWrapAroundQueue.display();
 
         theDisplayWrapAroundQueue.insert(50);            // insert 4 more items
         theDisplayWrapAroundQueue.insert(60);            //    (wraps around)
         theDisplayWrapAroundQueue.insert(70);
         theDisplayWrapAroundQueue.insert(80);
+
+        theDisplayWrapAroundQueue.display();
 
         while (!theDisplayWrapAroundQueue.isEmpty())    // remove and display
         {                            //    all items
@@ -88,6 +113,8 @@ class DisplayWrapAroundApp {
             System.out.print(" ");
         }
         System.out.println("");
+
+        theDisplayWrapAroundQueue.display();
     }  // end main()
 }  // end class QueueApp
 ////////////////////////////////////////////////////////////////
