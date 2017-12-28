@@ -2,46 +2,44 @@ package ua.dp.mign.queues;
 
 ////////////////////////////////////////////////////////////////
 class StackOnDequeue {
-    private int maxSize;        // size of stack array
-    private long[] stackArray;
-    private int top;            // top of stack
+    private QueueToDequeue dequeue;
 
     //--------------------------------------------------------------
     public StackOnDequeue(int s)         // constructor
     {
-        maxSize = s;             // set array size
-        stackArray = new long[maxSize];  // create array
-        top = -1;                // no items yet
+        this.dequeue = new QueueToDequeue(s);
     }
 
     //--------------------------------------------------------------
     public void push(long j)    // put item on top of stack
     {
-        stackArray[++top] = j;     // increment top, insert item
+        this.dequeue.insertRight(j);
     }
 
     //--------------------------------------------------------------
     public long pop()           // take item from top of stack
     {
-        return stackArray[top--];  // access item, decrement top
+        return this.dequeue.removeRight();
     }
 
     //--------------------------------------------------------------
     public long peek()          // peek at top of stack
     {
-        return stackArray[top];
+        long l = this.dequeue.removeRight();
+        this.dequeue.insertRight(l);
+        return l;
     }
 
     //--------------------------------------------------------------
     public boolean isEmpty()    // true if stack is empty
     {
-        return (top == -1);
+        return this.dequeue.isEmpty();
     }
 
     //--------------------------------------------------------------
     public boolean isFull()     // true if stack is full
     {
-        return (top == maxSize - 1);
+        return this.dequeue.isFull();
     }
 //--------------------------------------------------------------
 }  // end class StackOnDequeue
@@ -54,6 +52,7 @@ class StackOnDequeueApp {
         theStack.push(40);
         theStack.push(60);
         theStack.push(80);
+        theStack.push(99);
 
         while (!theStack.isEmpty())     // until it's empty,
         {                             // delete item from stack
