@@ -20,7 +20,7 @@ public final class SortedLinkedList {
                     break;
                 }
                 previous = current;
-                current = current.next;
+                current = current.getNext();
             }
             if (previous == null) {
                 newLink.setNext(first);
@@ -34,7 +34,7 @@ public final class SortedLinkedList {
 
     public long removeFirst() {
         Link tmp = first;
-        first = first.next;
+        first = first.getNext();
         return tmp.getData();
     }
 
@@ -46,7 +46,7 @@ public final class SortedLinkedList {
         Link current = first;
         while (current != null) {
             System.out.print(current.getData() + " ");
-            current = current.next;
+            current = current.getNext();
         }
         System.out.println();
     }
