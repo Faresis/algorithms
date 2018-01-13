@@ -82,28 +82,53 @@ class DArray {
 ////////////////////////////////////////////////////////////////
 class MergeSortApp {
     public static void main(String[] args) {
-        int maxSize = 100;             // array size
-        DArray arr;                    // reference to array
-        arr = new DArray(maxSize);     // create the array
+        int maxSize = 100_000;            // array size
 
-        arr.insert(64);                // insert items
-        arr.insert(21);
-        arr.insert(33);
-        arr.insert(70);
-        arr.insert(12);
-        arr.insert(85);
-        arr.insert(44);
-        arr.insert(3);
-        arr.insert(99);
-        arr.insert(0);
-        arr.insert(108);
-        arr.insert(36);
+        // inverse data
+        DArray inverse = new DArray(maxSize);
+        fillInversely(maxSize, inverse);
+        System.out.println("Inverse data.");
+        measure(inverse);
 
-        arr.display();                 // display items
+        // random data
+        DArray random = new DArray(maxSize);  // create the array
+        fillRandomly(maxSize, random);
+        System.out.println("Random data.");
+        measure(random);
 
-        arr.mergeSort();               // merge sort the array
-
-        arr.display();                 // display items again
+        // sorted data
+        DArray sortedData = new DArray(maxSize);
+        fillSorted(maxSize, sortedData);
+        System.out.println("Sorted data.");
+        measure(sortedData);
     }  // end main()
+
+    private static void fillInversely(int maxSize, DArray inverse) {
+        for (int i = maxSize; i > 0; --i) {
+            inverse.insert(i);
+        }
+    }
+
+    private static void fillRandomly(int maxSize, DArray random) {
+        for (int j = 0; j < maxSize; j++) { // fill array with
+            // random numbers
+            long n = (long) (Math.random() * (maxSize - 1));
+            random.insert(n);
+        }
+    }
+
+    private static void fillSorted(int maxSize, DArray sorted) {
+        for (int i = 0; i < maxSize; i++) {
+            sorted.insert(i);
+        }
+    }
+
+    private static void measure(DArray arr) {
+        long start = System.nanoTime();
+        arr.mergeSort();   // sort them
+        long end = System.nanoTime();
+
+        System.out.printf("Time elapsed: %d milliseconds.\n", (end - start) / 1_000_000);
+    }
 }  // end class MergeSortApp
 ////////////////////////////////////////////////////////////////
