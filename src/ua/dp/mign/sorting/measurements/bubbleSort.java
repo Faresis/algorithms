@@ -1,15 +1,15 @@
-package ua.dp.mign.sorting.simple.measurements;
+package ua.dp.mign.sorting.measurements;
 
-// selectSort.java
-// demonstrates selection sort
-// to run this program: C>java SelectSortApp
+// bubbleSort.java
+// demonstrates bubble sort
+// to run this program: C>java BubbleSortApp
 ////////////////////////////////////////////////////////////////
-class ArraySel {
+class ArrayBub {
     private long[] a;                 // ref to array a
     private int nElems;               // number of data items
 
     //--------------------------------------------------------------
-    public ArraySel(int max)          // constructor
+    public ArrayBub(int max)          // constructor
     {
         a = new long[max];                 // create the array
         nElems = 0;                        // no items yet
@@ -31,18 +31,14 @@ class ArraySel {
     }
 
     //--------------------------------------------------------------
-    public void selectionSort() {
-        int out, in, min;
+    public void bubbleSort() {
+        int out, in;
 
-        for (out = 0; out < nElems - 1; out++)   // outer loop
-        {
-            min = out;                     // minimum
-            for (in = out + 1; in < nElems; in++) // inner loop
-                if (a[in] < a[min])         // if min greater,
-                    min = in;               // we have a new min
-            swap(out, min);                // swap them
-        }  // end for(out)
-    }  // end selectionSort()
+        for (out = nElems - 1; out >= 1; out--)   // outer loop (backward)
+            for (in = 0; in < out; in++)        // inner loop (forward)
+                if (a[in] > a[in + 1])       // out of order?
+                    swap(in, in + 1);          // swap them
+    }  // end bubbleSort()
 
     //--------------------------------------------------------------
     private void swap(int one, int two) {
@@ -51,39 +47,39 @@ class ArraySel {
         a[two] = temp;
     }
 //--------------------------------------------------------------
-}  // end class ArraySel
+}  // end class ArrayBub
 
 ////////////////////////////////////////////////////////////////
-class SelectSortApp {
+class BubbleSortApp {
     public static void main(String[] args) {
         int maxSize = 100_000;            // array size
 
         // inverse data
-        ArraySel inverse = new ArraySel(maxSize);
+        ArrayBub inverse = new ArrayBub(maxSize);
         fillInversely(maxSize, inverse);
         System.out.println("Inverse data.");
         measure(inverse);
 
         // random data
-        ArraySel random = new ArraySel(maxSize);  // create the array
+        ArrayBub random = new ArrayBub(maxSize);  // create the array
         fillRandomly(maxSize, random);
         System.out.println("Random data.");
         measure(random);
 
         // sorted data
-        ArraySel sortedData = new ArraySel(maxSize);
+        ArrayBub sortedData = new ArrayBub(maxSize);
         fillSorted(maxSize, sortedData);
         System.out.println("Sorted data.");
         measure(sortedData);
     }  // end main()
 
-    private static void fillInversely(int maxSize, ArraySel inverse) {
+    private static void fillInversely(int maxSize, ArrayBub inverse) {
         for (int i = maxSize; i > 0; --i) {
             inverse.insert(i);
         }
     }
 
-    private static void fillRandomly(int maxSize, ArraySel random) {
+    private static void fillRandomly(int maxSize, ArrayBub random) {
         for (int j = 0; j < maxSize; j++) { // fill array with
             // random numbers
             long n = (long) (Math.random() * (maxSize - 1));
@@ -91,18 +87,18 @@ class SelectSortApp {
         }
     }
 
-    private static void fillSorted(int maxSize, ArraySel sorted) {
+    private static void fillSorted(int maxSize, ArrayBub sorted) {
         for (int i = 0; i < maxSize; i++) {
             sorted.insert(i);
         }
     }
 
-    private static void measure(ArraySel arr) {
+    private static void measure(ArrayBub arr) {
         long start = System.nanoTime();
-        arr.selectionSort();   // sort them
+        arr.bubbleSort();   // sort them
         long end = System.nanoTime();
 
         System.out.printf("Time elapsed: %d milliseconds.\n", (end - start) / 1_000_000);
     }
-}  // end class SelectSortApp
+}  // end class BubbleSortApp
 ////////////////////////////////////////////////////////////////

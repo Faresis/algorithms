@@ -1,4 +1,4 @@
-package ua.dp.mign.sorting.simple.measurements;
+package ua.dp.mign.sorting.measurements;
 
 // mergeSort.java
 // demonstrates recursive merge sort

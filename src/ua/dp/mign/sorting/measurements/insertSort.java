@@ -1,15 +1,15 @@
-package ua.dp.mign.sorting.simple.measurements;
+package ua.dp.mign.sorting.measurements;
 
-// bubbleSort.java
-// demonstrates bubble sort
-// to run this program: C>java BubbleSortApp
-////////////////////////////////////////////////////////////////
-class ArrayBub {
+// insertSort.java
+// demonstrates insertion sort
+// to run this program: C>java InsertSortApp
+//--------------------------------------------------------------
+class ArrayIns {
     private long[] a;                 // ref to array a
     private int nElems;               // number of data items
 
     //--------------------------------------------------------------
-    public ArrayBub(int max)          // constructor
+    public ArrayIns(int max)          // constructor
     {
         a = new long[max];                 // create the array
         nElems = 0;                        // no items yet
@@ -31,55 +31,54 @@ class ArrayBub {
     }
 
     //--------------------------------------------------------------
-    public void bubbleSort() {
-        int out, in;
+    public void insertionSort() {
+        int in, out;
 
-        for (out = nElems - 1; out >= 1; out--)   // outer loop (backward)
-            for (in = 0; in < out; in++)        // inner loop (forward)
-                if (a[in] > a[in + 1])       // out of order?
-                    swap(in, in + 1);          // swap them
-    }  // end bubbleSort()
-
-    //--------------------------------------------------------------
-    private void swap(int one, int two) {
-        long temp = a[one];
-        a[one] = a[two];
-        a[two] = temp;
-    }
+        for (out = 1; out < nElems; out++)     // out is dividing line
+        {
+            long temp = a[out];            // remove marked item
+            in = out;                      // start shifts at out
+            while (in > 0 && a[in - 1] >= temp) // until one is smaller,
+            {
+                a[in] = a[in - 1];            // shift item to right
+                --in;                       // go left one position
+            }
+            a[in] = temp;                  // insert marked item
+        }  // end for
+    }  // end insertionSort()
 //--------------------------------------------------------------
-}  // end class ArrayBub
+}  // end class ArrayIns
 
 ////////////////////////////////////////////////////////////////
-class BubbleSortApp {
+class InsertSortApp {
     public static void main(String[] args) {
         int maxSize = 100_000;            // array size
-
         // inverse data
-        ArrayBub inverse = new ArrayBub(maxSize);
+        ArrayIns inverse = new ArrayIns(maxSize);
         fillInversely(maxSize, inverse);
         System.out.println("Inverse data.");
         measure(inverse);
 
         // random data
-        ArrayBub random = new ArrayBub(maxSize);  // create the array
+        ArrayIns random = new ArrayIns(maxSize);  // create the array
         fillRandomly(maxSize, random);
         System.out.println("Random data.");
         measure(random);
 
         // sorted data
-        ArrayBub sortedData = new ArrayBub(maxSize);
+        ArrayIns sortedData = new ArrayIns(maxSize);
         fillSorted(maxSize, sortedData);
         System.out.println("Sorted data.");
         measure(sortedData);
     }  // end main()
 
-    private static void fillInversely(int maxSize, ArrayBub inverse) {
+    private static void fillInversely(int maxSize, ArrayIns inverse) {
         for (int i = maxSize; i > 0; --i) {
             inverse.insert(i);
         }
     }
 
-    private static void fillRandomly(int maxSize, ArrayBub random) {
+    private static void fillRandomly(int maxSize, ArrayIns random) {
         for (int j = 0; j < maxSize; j++) { // fill array with
             // random numbers
             long n = (long) (Math.random() * (maxSize - 1));
@@ -87,18 +86,17 @@ class BubbleSortApp {
         }
     }
 
-    private static void fillSorted(int maxSize, ArrayBub sorted) {
+    private static void fillSorted(int maxSize, ArrayIns sorted) {
         for (int i = 0; i < maxSize; i++) {
             sorted.insert(i);
         }
     }
 
-    private static void measure(ArrayBub arr) {
+    private static void measure(ArrayIns arr) {
         long start = System.nanoTime();
-        arr.bubbleSort();   // sort them
+        arr.insertionSort();   // sort them
         long end = System.nanoTime();
 
         System.out.printf("Time elapsed: %d milliseconds.\n", (end - start) / 1_000_000);
     }
-}  // end class BubbleSortApp
-////////////////////////////////////////////////////////////////
+}  // end class InsertSortApp

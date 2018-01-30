@@ -1,15 +1,15 @@
-package ua.dp.mign.sorting.simple.measurements;
+package ua.dp.mign.sorting.measurements;
 
-// insertSort.java
-// demonstrates insertion sort
-// to run this program: C>java InsertSortApp
-//--------------------------------------------------------------
-class ArrayIns {
+// selectSort.java
+// demonstrates selection sort
+// to run this program: C>java SelectSortApp
+////////////////////////////////////////////////////////////////
+class ArraySel {
     private long[] a;                 // ref to array a
     private int nElems;               // number of data items
 
     //--------------------------------------------------------------
-    public ArrayIns(int max)          // constructor
+    public ArraySel(int max)          // constructor
     {
         a = new long[max];                 // create the array
         nElems = 0;                        // no items yet
@@ -31,54 +31,59 @@ class ArrayIns {
     }
 
     //--------------------------------------------------------------
-    public void insertionSort() {
-        int in, out;
+    public void selectionSort() {
+        int out, in, min;
 
-        for (out = 1; out < nElems; out++)     // out is dividing line
+        for (out = 0; out < nElems - 1; out++)   // outer loop
         {
-            long temp = a[out];            // remove marked item
-            in = out;                      // start shifts at out
-            while (in > 0 && a[in - 1] >= temp) // until one is smaller,
-            {
-                a[in] = a[in - 1];            // shift item to right
-                --in;                       // go left one position
-            }
-            a[in] = temp;                  // insert marked item
-        }  // end for
-    }  // end insertionSort()
+            min = out;                     // minimum
+            for (in = out + 1; in < nElems; in++) // inner loop
+                if (a[in] < a[min])         // if min greater,
+                    min = in;               // we have a new min
+            swap(out, min);                // swap them
+        }  // end for(out)
+    }  // end selectionSort()
+
+    //--------------------------------------------------------------
+    private void swap(int one, int two) {
+        long temp = a[one];
+        a[one] = a[two];
+        a[two] = temp;
+    }
 //--------------------------------------------------------------
-}  // end class ArrayIns
+}  // end class ArraySel
 
 ////////////////////////////////////////////////////////////////
-class InsertSortApp {
+class SelectSortApp {
     public static void main(String[] args) {
         int maxSize = 100_000;            // array size
+
         // inverse data
-        ArrayIns inverse = new ArrayIns(maxSize);
+        ArraySel inverse = new ArraySel(maxSize);
         fillInversely(maxSize, inverse);
         System.out.println("Inverse data.");
         measure(inverse);
 
         // random data
-        ArrayIns random = new ArrayIns(maxSize);  // create the array
+        ArraySel random = new ArraySel(maxSize);  // create the array
         fillRandomly(maxSize, random);
         System.out.println("Random data.");
         measure(random);
 
         // sorted data
-        ArrayIns sortedData = new ArrayIns(maxSize);
+        ArraySel sortedData = new ArraySel(maxSize);
         fillSorted(maxSize, sortedData);
         System.out.println("Sorted data.");
         measure(sortedData);
     }  // end main()
 
-    private static void fillInversely(int maxSize, ArrayIns inverse) {
+    private static void fillInversely(int maxSize, ArraySel inverse) {
         for (int i = maxSize; i > 0; --i) {
             inverse.insert(i);
         }
     }
 
-    private static void fillRandomly(int maxSize, ArrayIns random) {
+    private static void fillRandomly(int maxSize, ArraySel random) {
         for (int j = 0; j < maxSize; j++) { // fill array with
             // random numbers
             long n = (long) (Math.random() * (maxSize - 1));
@@ -86,17 +91,18 @@ class InsertSortApp {
         }
     }
 
-    private static void fillSorted(int maxSize, ArrayIns sorted) {
+    private static void fillSorted(int maxSize, ArraySel sorted) {
         for (int i = 0; i < maxSize; i++) {
             sorted.insert(i);
         }
     }
 
-    private static void measure(ArrayIns arr) {
+    private static void measure(ArraySel arr) {
         long start = System.nanoTime();
-        arr.insertionSort();   // sort them
+        arr.selectionSort();   // sort them
         long end = System.nanoTime();
 
         System.out.printf("Time elapsed: %d milliseconds.\n", (end - start) / 1_000_000);
     }
-}  // end class InsertSortApp
+}  // end class SelectSortApp
+////////////////////////////////////////////////////////////////

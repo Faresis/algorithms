@@ -1,4 +1,4 @@
-package ua.dp.mign.sorting.simple.measurements;
+package ua.dp.mign.sorting.measurements;
 
 class ArrayInsCounting {
     private long[] a;                 // ref to array a
