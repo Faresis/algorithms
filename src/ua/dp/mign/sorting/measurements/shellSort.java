@@ -58,7 +58,7 @@ class ArraySh {
 ////////////////////////////////////////////////////////////////
 class ShellSortApp {
     public static void main(String[] args) {
-        int maxSize = 100_000;            // array size
+        int maxSize = 100_000_000;            // array size
         // inverse data
         ArraySh inverse = new ArraySh(maxSize);
         fillInversely(maxSize, inverse);
