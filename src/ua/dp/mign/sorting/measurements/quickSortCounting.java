@@ -5,6 +5,9 @@ class ArrayQc {
     private long[] theArray;          // ref to array theArray
     private int nElems;               // number of data items
 
+    private int numOfSwaps;
+    private int numOfComparisons;
+
     //--------------------------------------------------------------
     public ArrayQc(int max)          // constructor
     {
@@ -30,6 +33,8 @@ class ArrayQc {
 
     //--------------------------------------------------------------
     public void quickSort() {
+        this.numOfSwaps = 0;
+        this.numOfComparisons = 0;
         recQuickSort(0, nElems - 1);
     }
 
@@ -51,13 +56,13 @@ class ArrayQc {
     public long medianOf3(int left, int right) {
         int center = (left + right) / 2;
         // order left & center
-        if (theArray[left] > theArray[center])
+        if (++numOfComparisons > 0 && theArray[left] > theArray[center])
             swap(left, center);
         // order left & right
-        if (theArray[left] > theArray[right])
+        if (++numOfComparisons > 0 && theArray[left] > theArray[right])
             swap(left, right);
         // order center & right
-        if (theArray[center] > theArray[right])
+        if (++numOfComparisons > 0 && theArray[center] > theArray[right])
             swap(center, right);
 
         swap(center, right - 1);             // put pivot on right
@@ -70,6 +75,7 @@ class ArrayQc {
         long temp = theArray[dex1];        // A into temp
         theArray[dex1] = theArray[dex2];   // B into A
         theArray[dex2] = temp;             // temp into B
+        this.numOfSwaps++;
     }  // end swap(
 
     //--------------------------------------------------------------
@@ -78,9 +84,9 @@ class ArrayQc {
         int rightPtr = right - 1;       // left of pivot
 
         while (true) {
-            while (theArray[++leftPtr] < pivot)  // find bigger
+            while (++numOfComparisons > 0 && theArray[++leftPtr] < pivot)  // find bigger
                 ;                                  //    (nop)
-            while (theArray[--rightPtr] > pivot) // find smaller
+            while (++numOfComparisons > 0 && theArray[--rightPtr] > pivot) // find smaller
                 ;                                  //    (nop)
             if (leftPtr >= rightPtr)      // if pointers cross,
                 break;                    //    partition done
@@ -97,37 +103,48 @@ class ArrayQc {
         if (size <= 1)
             return;         // no sort necessary
         if (size == 2) {               // 2-sort left and right
-            if (theArray[left] > theArray[right])
+            if (++numOfComparisons > 0 && theArray[left] > theArray[right])
                 swap(left, right);
             return;
         } else               // size is 3
         {               // 3-sort left, center, & right
-            if (theArray[left] > theArray[right - 1])
+            if (++numOfComparisons > 0 && theArray[left] > theArray[right - 1])
                 swap(left, right - 1);                // left, center
-            if (theArray[left] > theArray[right])
+            if (++numOfComparisons > 0 && theArray[left] > theArray[right])
                 swap(left, right);                  // left, right
-            if (theArray[right - 1] > theArray[right])
+            if (++numOfComparisons > 0 && theArray[right - 1] > theArray[right])
                 swap(right - 1, right);               // center, right
         }
     }  // end manualSort()
 //--------------------------------------------------------------
+
+    public int getNumOfSwaps() {
+        return numOfSwaps;
+    }
+
+    public int getNumOfComparisons() {
+        return numOfComparisons;
+    }
 }  // end class ArrayQc
 
 ////////////////////////////////////////////////////////////////
 class QuickSort2App {
     public static void main(String[] args) {
-        int maxSize = 16;             // array size
+        int maxSize = 100;             // array size
         ArrayQc arr;                 // reference to array
         arr = new ArrayQc(maxSize);  // create the array
 
         for (int j = 0; j < maxSize; j++)  // fill array with
         {                          // random numbers
-            long n = (int) (java.lang.Math.random() * 99);
+            long n = maxSize - j;
             arr.insert(n);
         }
         arr.display();                // display items
         arr.quickSort();              // quicksort them
         arr.display();                // display them again
+
+        System.out.println("Num of swaps: " + arr.getNumOfSwaps());
+        System.out.println("Num of comparisons: " + arr.getNumOfComparisons());
     }  // end main()
 }  // end class QuickSort2App
 ////////////////////////////////////////////////////////////////
