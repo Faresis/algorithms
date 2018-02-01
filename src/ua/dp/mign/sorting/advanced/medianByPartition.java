@@ -65,6 +65,33 @@ class ArrayMed {
         theArray[dex2] = temp;             // temp into B
     }  // end swap()
     //--------------------------------------------------------------
+    public long getMedianPartition() {
+        return getMedianRec(0, nElems - 1, nElems/2);
+    }
+
+    public long getMedianSort() {
+        Arrays.sort(theArray);
+        return theArray[nElems / 2];
+    }
+
+    public long getMedianRec(int left, int right, int middle) {
+        int pivot = partitionIt(left, right);
+
+        if (pivot == middle) {
+
+            return theArray[pivot];
+
+        } else if (pivot > middle) {
+
+            return getMedianRec(left, --pivot, middle);
+
+        } else { // pivot < middle
+
+            return getMedianRec(++pivot, right, middle);
+
+        }
+
+    }
 }  // end class ArrayMed
 public final class medianByPartition {
     public static void main(String[] args) {
@@ -78,5 +105,13 @@ public final class medianByPartition {
             arr.insert(n);
         }
         arr.display();                // display unsorted array
+
+        System.out.println("Partitioning median is :" + arr.getMedianPartition());
+
+        arr.display();
+
+        System.out.println("Sorting median is :" + arr.getMedianSort());
+
+        arr.display();
     }
 }
