@@ -34,15 +34,15 @@ class ArrayPar {
     }
 
     //--------------------------------------------------------------
-    public int partitionIt(int left, int right, long pivot) {
+    public int partitionIt(int left, int right) {
+        long pivot = theArray[right];
         int leftPtr = left - 1;           // right of first elem
-        int rightPtr = right + 1;         // left of pivot
+        int rightPtr = right;             // left of pivot
         while (true) {
-            while (leftPtr < right &&       // find bigger item
-                    theArray[++leftPtr] < pivot)
+            while(theArray[++leftPtr] < pivot)
                 ;  // (nop)
 
-            while (rightPtr > left &&       // find smaller item
+            while (rightPtr > 0 &&       // find smaller item
                     theArray[--rightPtr] > pivot)
                 ;  // (nop)
             if (leftPtr >= rightPtr)        // if pointers cross,
@@ -50,6 +50,7 @@ class ArrayPar {
             else                           // not crossed, so
                 swap(leftPtr, rightPtr);    //    swap elements
         }  // end while(true)
+        swap(leftPtr, right);
         return leftPtr;                   // return partition
     }  // end partitionIt()
 
@@ -62,6 +63,9 @@ class ArrayPar {
         theArray[dex2] = temp;             // temp into B
     }  // end swap()
 //--------------------------------------------------------------
+    public long get(int idx) {
+        return theArray[idx];
+    }
 }  // end class ArrayPar
 
 ////////////////////////////////////////////////////////////////
@@ -78,11 +82,10 @@ class PartitionApp {
         }
         arr.display();                // display unsorted array
 
-        long pivot = 99;              // pivot value
-        System.out.print("Pivot is " + pivot);
         int size = arr.size();
+        System.out.print("Pivot is " + arr.get(size - 1));
         // partition array
-        int partDex = arr.partitionIt(0, size - 1, pivot);
+        int partDex = arr.partitionIt(0, size - 1);
 
         System.out.println(", Partition is at index " + partDex);
         arr.display();                // display partitioned array
