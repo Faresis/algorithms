@@ -1,13 +1,11 @@
 package ua.dp.mign.sorting.advanced;
 
-import java.util.Arrays;
-
-class ArrayMed {
+class ArraySel {
     private long[] theArray;          // ref to array theArray
     private int nElems;               // number of data items
 
     //--------------------------------------------------------------
-    public ArrayMed(int max)          // constructor
+    public ArraySel(int max)          // constructor
     {
         theArray = new long[max];      // create the array
         nElems = 0;                    // no items yet
@@ -65,54 +63,19 @@ class ArrayMed {
         theArray[dex2] = temp;             // temp into B
     }  // end swap()
     //--------------------------------------------------------------
-    public long getMedianPartition() {
-        return getMedianRec(0, nElems - 1, nElems/2);
-    }
+}  // end class ArraySel
 
-    public long getMedianSort() {
-        Arrays.sort(theArray);
-        return theArray[nElems / 2];
-    }
-
-    private long getMedianRec(int left, int right, int middle) {
-        int pivot = partitionIt(left, right);
-
-        if (pivot == middle) {
-
-            return theArray[pivot];
-
-        } else if (pivot > middle) {
-
-            return getMedianRec(left, --pivot, middle);
-
-        } else { // pivot < middle
-
-            return getMedianRec(++pivot, right, middle);
-
-        }
-
-    }
-}  // end class ArrayMed
-
-class MedianByPartitionApp {
+class SelectionApp {
     public static void main(String[] args) {
         int maxSize = 101;
-        ArrayMed arr;                 // reference to array
-        arr = new ArrayMed(maxSize);  // create the array
+        ArraySel arr;                 // reference to array
+        arr = new ArraySel(maxSize);  // create the array
 
         for (int j = 0; j < maxSize; j++)  // fill array with
         {                          // random numbers
-            long n = (int) (java.lang.Math.random() * 199);
+            long n = (int) (Math.random() * 199);
             arr.insert(n);
         }
         arr.display();                // display unsorted array
-
-        System.out.println("Partitioning median is :" + arr.getMedianPartition());
-
-        arr.display();
-
-        System.out.println("Sorting median is :" + arr.getMedianSort());
-
-        arr.display();
     }
 }
