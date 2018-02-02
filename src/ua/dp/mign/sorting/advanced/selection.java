@@ -107,7 +107,7 @@ class SelectionApp {
         }
         arr.display();                // display unsorted array
 
-        int secondSmallest = 0 + 2;
+        int secondSmallest = 0 + 1;
         int seventhLargest = maxSize - 7;
 
         System.out.println("Second smallest by partition is :" + arr.selectByPartition(secondSmallest));
@@ -119,5 +119,24 @@ class SelectionApp {
         System.out.println("Seventh largest by sorting is :" + arr.selectBySorting(seventhLargest));
 
         arr.display();
+
+        System.out.println("Handling of a small array.");
+        maxSize = 2;
+        arr = new ArraySel(maxSize);
+        for (int j = 0; j < maxSize; j++)  // fill array with
+        {                          // random numbers
+            long n = (int) (Math.random() * 199);
+            arr.insert(n);
+        }
+        arr.display();                // display unsorted array
+
+        int firstLargest = maxSize - 1;
+        System.out.println("Second smallest by partition is :" + arr.selectByPartition(secondSmallest));
+        System.out.println("First largest by partition is :" + arr.selectByPartition(firstLargest));
+
+        arr.display();
+
+        System.out.println("Second smallest by sorting is :" + arr.selectBySorting(secondSmallest));
+        System.out.println("First largest by sorting is :" + arr.selectBySorting(firstLargest));
     }
 }
