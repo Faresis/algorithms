@@ -1,5 +1,7 @@
 package ua.dp.mign.sorting.advanced;
 
+import java.util.Arrays;
+
 class ArraySel {
     private long[] theArray;          // ref to array theArray
     private int nElems;               // number of data items
@@ -63,6 +65,33 @@ class ArraySel {
         theArray[dex2] = temp;             // temp into B
     }  // end swap()
     //--------------------------------------------------------------
+    public long selectByPartition(int idx) {
+        return selectByPartitionRec(0, nElems - 1, idx);
+    }
+
+    public long selectBySorting(int idx) {
+        Arrays.sort(theArray);
+        return theArray[idx];
+    }
+
+    private long selectByPartitionRec(int left, int right, int idx) {
+        int pivot = partitionIt(left, right);
+
+        if (pivot == idx) {
+
+            return theArray[pivot];
+
+        } else if (pivot > idx) {
+
+            return selectByPartitionRec(left, --pivot, idx);
+
+        } else { // pivot < idx
+
+            return selectByPartitionRec(++pivot, right, idx);
+
+        }
+
+    }
 }  // end class ArraySel
 
 class SelectionApp {
@@ -77,5 +106,18 @@ class SelectionApp {
             arr.insert(n);
         }
         arr.display();                // display unsorted array
+
+        int secondSmallest = 0 + 2;
+        int seventhLargest = maxSize - 7;
+
+        System.out.println("Second smallest by partition is :" + arr.selectByPartition(secondSmallest));
+        System.out.println("Seventh largest by partition is :" + arr.selectByPartition(seventhLargest));
+
+        arr.display();
+
+        System.out.println("Second smallest by sorting is :" + arr.selectBySorting(secondSmallest));
+        System.out.println("Seventh largest by sorting is :" + arr.selectBySorting(seventhLargest));
+
+        arr.display();
     }
 }
