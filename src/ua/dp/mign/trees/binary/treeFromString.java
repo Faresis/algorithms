@@ -1,7 +1,12 @@
 package ua.dp.mign.trees.binary;// tree.java
 
+import com.google.common.collect.Lists;
+
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 ////////////////////////////////////////////////////////////////
 class Node {
@@ -131,13 +136,29 @@ class Tree {
 class TreeApp {
     public static void main(String[] args) throws IOException {
         String theString = "ABCDE";
-        Node node = theString.chars()
-                .mapToObj(c -> new Node((char) c))
-                .reduce((n1, n2) -> new Node('+', n1, n2))
-                .get();
 
-        Tree theTree = new Tree(node);
+        List<Node> nodes = theString.chars()
+                .mapToObj(c -> new Node((char) c))
+                .collect(Collectors.toList());
+
+        Tree theTree = buildTree(nodes);
         theTree.displayTree();
     }  // end main()
+
+    private static Tree buildTree(List<Node> nodes) {
+        while (nodes.size() > 1) {
+            LinkedList<Node> grouped = Lists.newLinkedList();
+            for (List<Node> part : Lists.partition(nodes, 2)) {
+                Node p = new Node('+');
+                p.leftChild = part.get(0);
+                if (part.size() > 1) {
+                    p.rightChild = part.get(1);
+                }
+                grouped.addFirst(p);
+            }
+            nodes = grouped;
+        }
+        return new Tree(nodes.get(0));
+    }
 }  // end class TreeApp
 ////////////////////////////////////////////////////////////////
