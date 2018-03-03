@@ -1,12 +1,7 @@
 package ua.dp.mign.trees.binary;// tree.java
 
-import com.google.common.collect.Lists;
-
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Stack;
-import java.util.stream.Collectors;
 
 ////////////////////////////////////////////////////////////////
 class Node {
@@ -135,30 +130,31 @@ class Tree {
 ////////////////////////////////////////////////////////////////
 class TreeApp {
     public static void main(String[] args) throws IOException {
-        String theString = "ABCDE";
+        String theString = "ABCDEFGHIJ";
 
-        List<Node> nodes = theString.chars()
-                .mapToObj(c -> new Node((char) c))
-                .collect(Collectors.toList());
-
-        Tree theTree = buildTree(nodes);
-        theTree.displayTree();
+        Tree tree = buildTree(theString);
+        tree.displayTree();
     }  // end main()
 
-    private static Tree buildTree(List<Node> nodes) {
-        while (nodes.size() > 1) {
-            LinkedList<Node> grouped = Lists.newLinkedList();
-            for (List<Node> part : Lists.partition(nodes, 2)) {
-                Node p = new Node('+');
-                p.leftChild = part.get(0);
-                if (part.size() > 1) {
-                    p.rightChild = part.get(1);
-                }
-                grouped.addFirst(p);
-            }
-            nodes = grouped;
+    private static Tree buildTree(String string) {
+        Node root = new Node(string.charAt(0));
+        initNodesRec(root, string.toCharArray(), 1);
+        return new Tree(root);
+    }
+
+    private static void initNodesRec(Node node, char[] chars, int num) {
+        int rightIdx = 2 * num;
+        int leftIdx = rightIdx - 1;
+        if (chars.length > leftIdx) {
+            Node left = new Node(chars[leftIdx]);
+            node.leftChild = left;
+            initNodesRec(left, chars, ++leftIdx);
         }
-        return new Tree(nodes.get(0));
+        if (chars.length > rightIdx) {
+            Node right = new Node(chars[rightIdx]);
+            node.rightChild = right;
+            initNodesRec(right, chars, ++rightIdx);
+        }
     }
 }  // end class TreeApp
 ////////////////////////////////////////////////////////////////
