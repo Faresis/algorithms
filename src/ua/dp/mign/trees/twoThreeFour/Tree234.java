@@ -145,5 +145,11 @@ class Tree234 {
             inOrder(node.getChild(i+1), consumer);
         }
     }
+
+    public void addAll(long[] array) {
+        for (long data : array) {
+            this.insert(data);
+        }
+    }
 // -------------------------------------------------------------\
 }  // end class Tree234
