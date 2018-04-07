@@ -1,5 +1,7 @@
 package ua.dp.mign.trees.twoThreeFour;
 
+import java.util.function.LongConsumer;
+
 ////////////////////////////////////////////////////////////////
 class Tree234 {
     private Node root = new Node();            // make root node
@@ -126,6 +128,22 @@ class Tree234 {
             current = current.getChild(0);
         }
         return current.getItem(0).getData();
+    }
+
+    public void inOrder(LongConsumer consumer) {
+        inOrder(root, consumer);
+    }
+
+    private static void inOrder(Node node, LongConsumer consumer) {
+        if (node == null) {
+            return;
+        }
+
+        inOrder(node.getChild(0), consumer);
+        for(int i = 0; i < node.getNumItems(); i++) {
+            consumer.accept(node.getItem(i).getData());
+            inOrder(node.getChild(i+1), consumer);
+        }
     }
 // -------------------------------------------------------------\
 }  // end class Tree234
