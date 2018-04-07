@@ -119,5 +119,13 @@ class Tree234 {
                 return;
         }
     }  // end recDisplayTree()
+
+    public long min() {
+        Node current = root;
+        while (current.getChild(0) != null) {
+            current = current.getChild(0);
+        }
+        return current.getItem(0).getData();
+    }
 // -------------------------------------------------------------\
 }  // end class Tree234

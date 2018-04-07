@@ -15,6 +15,38 @@ class MinTree234App {
         theTree.insert(70);
 
         theTree.displayTree();
+
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(20);
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(19);
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(18);
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(17);
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(16);
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(15);
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(14);
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(6);
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(7);
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(8);
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(9);
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(10);
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(11);
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(12);
+        System.out.println("Min value: " + theTree.min());
+        theTree.insert(2);
+        System.out.println("Min value: " + theTree.min());
     }  // end main()
 }  // end class Tree234App
 ////////////////////////////////////////////////////////////////

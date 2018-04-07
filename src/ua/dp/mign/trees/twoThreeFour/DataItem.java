@@ -15,5 +15,9 @@ class DataItem {
     {
         System.out.print("/" + dData);
     }
-//--------------------------------------------------------------
+
+    public long getData() {
+        return dData;
+    }
+    //--------------------------------------------------------------
 }  // end class DataItem
