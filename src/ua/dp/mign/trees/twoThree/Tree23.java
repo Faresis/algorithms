@@ -1,5 +1,7 @@
 package ua.dp.mign.trees.twoThree;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.function.LongConsumer;
 
 ////////////////////////////////////////////////////////////////
@@ -16,7 +18,7 @@ class Tree23 {
             else if (curNode.isLeaf())
                 return -1;                        // can't find it
             else                                 // search deeper
-                curNode = getNextChild(curNode, key);
+                curNode = curNode.getNextChild(key);
         }  // end while
     }
 
@@ -24,80 +26,81 @@ class Tree23 {
     // insert a DataItem
     public void insert(long dValue) {
         Node curNode = root;
-        DataItem tempItem = new DataItem(dValue);
+        while(!curNode.isLeaf()) {
+            curNode = curNode.getNextChild(dValue);
+        }
 
-        while (true) {
-            if (curNode.isFull())               // if node full,
-            {
-                split(curNode);                   // split it
-                curNode = curNode.getParent();    // back up
-                // search once
-                curNode = getNextChild(curNode, dValue);
-            }  // end if(node is full)
-
-            else if (curNode.isLeaf())          // if node is leaf,
-                break;                            // go insert
-                // node is not full, not a leaf; so go to lower level
-            else
-                curNode = getNextChild(curNode, dValue);
-        }  // end while
-
-        curNode.insertItem(tempItem);       // insert new DataItem
+        if (curNode.isFull()) {
+            split(curNode, dValue);
+            while (root.getParent() != null) {
+                root = root.getParent();
+            }
+        } else {
+            curNode.insertItem(dValue);
+        }
     }  // end insert()
 
     // -------------------------------------------------------------
-    public void split(Node thisNode)     // split the node
+    private static Node split(Node thisNode, long newValue)     // split the node
     {
-        // assumes node is full
-        DataItem itemB, itemC;
-        Node parent, child2, child3;
-        int itemIndex;
+        long[] values = {thisNode.getItem(0).getData(), thisNode.getItem(1).getData(), newValue};
+        Arrays.sort(values);
 
-        itemC = thisNode.removeItem();    // remove items from
-        itemB = thisNode.removeItem();    // this node
-        child2 = thisNode.disconnectChild(2); // remove children
-        child3 = thisNode.disconnectChild(3); // from this node
+        long left = values[0];
+        long middle = values[1];
+        long right = values[2];
 
-        Node newRight = new Node();       // make new node
+        Node leftNode = thisNode;
+        leftNode.removeItem();
+        leftNode.removeItem();
+        leftNode.insertItem(left);
 
-        if (thisNode == root)                // if this is the root,
-        {
-            root = new Node();                // make new root
-            parent = root;                    // root is our parent
-            root.connectChild(0, thisNode);   // connect to parent
-        } else                              // this node not the root
-            parent = thisNode.getParent();    // get parent
+        Node rightNode = new Node();
+        rightNode.insertItem(right);
 
-        // deal with parent
-        itemIndex = parent.insertItem(itemB); // item B to parent
-        int n = parent.getNumItems();         // total items?
-
-        for (int j = n - 1; j > itemIndex; j--)          // move parent's
-        {                                      // connections
-            Node temp = parent.disconnectChild(j); // one child
-            parent.connectChild(j + 1, temp);        // to the right
+        Node originalParent = thisNode.getParent();
+        if (originalParent == null) {
+            originalParent = new Node();
+            originalParent.insertItem(middle);
+            originalParent.connectChild(0, leftNode);
+            originalParent.connectChild(1, rightNode);
+            return rightNode;
+        } else if (!originalParent.isFull()) {
+            originalParent.insertItem(middle);
+            reLinkChildren(originalParent, leftNode, rightNode);
+            return rightNode;
+        } else {
+            Node rightParent = split(originalParent, middle);
+            if (leftNode.equals(originalParent.getChild(0))) {
+                Node childOne = originalParent.disconnectChild(1);
+                Node childTwo = originalParent.disconnectChild(2);
+                originalParent.connectChild(1, rightNode);
+                rightParent.connectChild(0, childOne);
+                rightParent.connectChild(1, childTwo);
+            } else if (leftNode.equals(originalParent.getChild(1))) {
+                Node childTwo = originalParent.disconnectChild(2);
+                rightParent.connectChild(0, rightNode);
+                rightParent.connectChild(1, childTwo);
+            } else if (leftNode.equals(originalParent.getChild(2))) {
+                Node childTwo = originalParent.disconnectChild(2);
+                rightParent.connectChild(0, childTwo);
+                rightParent.connectChild(1, rightNode);
+            } else {
+                throw new IllegalStateException("Unknown case.");
+            }
         }
-        // connect newRight to parent
-        parent.connectChild(itemIndex + 1, newRight);
-
-        // deal with newRight
-        newRight.insertItem(itemC);       // item C to newRight
-        newRight.connectChild(0, child2); // connect to 0 and 1
-        newRight.connectChild(1, child3); // on newRight
+        return rightNode;
     }  // end split()
 
-    // -------------------------------------------------------------
-    // gets appropriate child of node during search for value
-    public Node getNextChild(Node theNode, long theValue) {
-        int j;
-        // assumes node is not empty, not full, not a leaf
-        int numItems = theNode.getNumItems();
-        for (j = 0; j < numItems; j++)          // for each item in node
-        {                               // are we less?
-            if (theValue < theNode.getItem(j).dData)
-                return theNode.getChild(j);  // return left child
-        }  // end for                   // we're greater, so
-        return theNode.getChild(j);        // return right child
+    private static void reLinkChildren(Node parent, Node leftChild, Node rightChild) {
+        LinkedList<Node> children = parent.getChildren();
+        children.add(leftChild);
+        children.add(rightChild);
+        parent.disconnectChildren();
+
+        while (!children.isEmpty()) {
+            parent.connectChild(children.removeFirst());
+        }
     }
 
     // -------------------------------------------------------------
@@ -152,4 +155,4 @@ class Tree23 {
         }
     }
 // -------------------------------------------------------------\
-}  // end class Tree234
+}  // end class Tree23

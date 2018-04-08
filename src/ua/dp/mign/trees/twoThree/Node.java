@@ -1,8 +1,13 @@
 package ua.dp.mign.trees.twoThree;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 ////////////////////////////////////////////////////////////////
 class Node {
-    private static final int ORDER = 4;
+    private static final int ORDER = 3;
     private int numItems;
     private Node parent;
     private Node childArray[] = new Node[ORDER];
@@ -16,6 +21,30 @@ class Node {
             child.parent = this;
     }
 
+    public void connectChild(Node child) {
+        int childNum = getChildNum(child.getMax());
+        this.connectChild(childNum, child);
+    }
+
+    public Node getNextChild(long theValue) {
+        return getChild(getChildNum(theValue));
+    }
+
+    private int getChildNum(long theValue) {
+        int j;
+        int numItems = this.getNumItems();
+        for (j = 0; j < numItems; j++)
+        {
+            if (theValue < this.getItem(j).getData())
+                return j;
+        }
+        return j;
+    }
+
+    private long getMax() {
+        return getItem(numItems - 1).getData();
+    }
+
     // -------------------------------------------------------------
     // disconnect child from this node, return it
     public Node disconnectChild(int childNum) {
@@ -24,9 +53,17 @@ class Node {
         return tempNode;
     }
 
+    public void disconnectChildren() {
+        Arrays.setAll(childArray, (i) -> null);
+    }
+
     // -------------------------------------------------------------
     public Node getChild(int childNum) {
         return childArray[childNum];
+    }
+
+    public LinkedList<Node> getChildren() {
+        return Arrays.stream(childArray).filter(Objects::nonNull).collect(Collectors.toCollection(LinkedList::new));
     }
 
     // -------------------------------------------------------------
@@ -55,6 +92,10 @@ class Node {
         return (numItems == ORDER - 1) ? true : false;
     }
 
+    public boolean isEmpty() {
+        return numItems == 0;
+    }
+
     // -------------------------------------------------------------
     public int findItem(long key)       // return index of
     {                                    // item (within node)
@@ -69,28 +110,30 @@ class Node {
     }  // end findItem
 
     // -------------------------------------------------------------
-    public int insertItem(DataItem newItem) {
+    public int insertItem(long data) {
+        DataItem newItem = new DataItem(data);
         // assumes node is not full
-        numItems++;                          // will add new item
-        long newKey = newItem.dData;         // key of new item
-
-        for (int j = ORDER - 2; j >= 0; j--)        // start on right,
-        {                                 //    examine items
-            if (itemArray[j] == null)          // if item null,
-                continue;                      // go left one cell
-            else                              // not null,
-            {                              // get its key
-                long itsKey = itemArray[j].dData;
-                if (newKey < itsKey)            // if it's bigger
-                    itemArray[j + 1] = itemArray[j]; // shift it right
-                else {
-                    itemArray[j + 1] = newItem;   // insert new item
-                    return j + 1;                 // return index to
-                }                           //    new item
-            }  // end else (not null)
-        }  // end for                     // shifted all items,
-        itemArray[0] = newItem;              // insert new item
-        return 0;
+        if (this.isFull()) {
+            throw new IllegalStateException("Can't insert into a full node.");
+        }
+        if (this.isEmpty()) {
+            itemArray[0] = newItem;
+            numItems++;
+            return 0;
+        } else {
+            long newKey = newItem.dData;
+            long oldKey = itemArray[0].getData();
+            if (newKey > oldKey) {
+                itemArray[1] = newItem;
+                numItems++;
+                return 1;
+            } else {
+                itemArray[1] = itemArray[0];
+                itemArray[0] = newItem;
+                numItems++;
+                return 0;
+            }
+        }
     }  // end insertItem()
 
     // -------------------------------------------------------------
