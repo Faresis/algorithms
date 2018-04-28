@@ -3,21 +3,23 @@ package ua.dp.mign.hashtables.linear;
 // demonstrates hash table with linear probing
 // to run this program: C:>java HashTableApp
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 ////////////////////////////////////////////////////////////////
 class DataItem {                                // (could have more data)
-    private int iData;               // data item (key)
+    private String sData;               // data item (key)
 
     //--------------------------------------------------------------
-    public DataItem(int ii)          // constructor
+    public DataItem(String string)          // constructor
     {
-        iData = ii;
+        this.sData = string;
     }
 
     //--------------------------------------------------------------
-    public int getKey() {
-        return iData;
+    public String getKey() {
+        return sData;
     }
 //--------------------------------------------------------------
 }  // end class DataItem
@@ -33,14 +35,14 @@ class HashTable {
     {
         arraySize = size;
         hashArray = new DataItem[arraySize];
-        nonItem = new DataItem(-1);   // deleted item key is -1
+        nonItem = new DataItem(null);   // deleted item key is null
     }
 
     // -------------------------------------------------------------
     public void displayTable() {
         System.out.print("Table: ");
         for (int j = 0; j < arraySize; j++) {
-            if (hashArray[j] != null)
+            if (hashArray[j] != null && hashArray[j].getKey() != null)
                 System.out.print(hashArray[j].getKey() + " ");
             else
                 System.out.print("** ");
@@ -49,19 +51,24 @@ class HashTable {
     }
 
     // -------------------------------------------------------------
-    public int hashFunc(int key) {
-        return key % arraySize;       // hash function
+    public int hashFunc(String key) {
+        int hash = 0;
+        for (int i = 0; i < key.length(); i++) {
+            int letter = key.charAt(i);
+            hash = (hash * 27 + letter) % arraySize;
+        }
+        return hash;       // hash function
     }
 
     // -------------------------------------------------------------
     public void insert(DataItem item) // insert a DataItem
     // (assumes table not full)
     {
-        int key = item.getKey();      // extract key
+        String key = item.getKey();      // extract key
         int hashVal = hashFunc(key);  // hash the key
         // until empty cell or -1,
         while (hashArray[hashVal] != null &&
-                hashArray[hashVal].getKey() != -1) {
+                hashArray[hashVal].getKey() != null) {
             ++hashVal;                 // go to next cell
             hashVal %= arraySize;      // wraparound if necessary
         }
@@ -69,13 +76,13 @@ class HashTable {
     }  // end insert()
 
     // -------------------------------------------------------------
-    public DataItem delete(int key)  // delete a DataItem
+    public DataItem delete(String key)  // delete a DataItem
     {
         int hashVal = hashFunc(key);  // hash the key
 
         while (hashArray[hashVal] != null)  // until empty cell,
         {                               // found the key?
-            if (hashArray[hashVal].getKey() == key) {
+            if (key.equals(hashArray[hashVal].getKey())) {
                 DataItem temp = hashArray[hashVal]; // save item
                 hashArray[hashVal] = nonItem;       // delete item
                 return temp;                        // return item
@@ -87,13 +94,13 @@ class HashTable {
     }  // end delete()
 
     // -------------------------------------------------------------
-    public DataItem find(int key)    // find item with key
+    public DataItem find(String key)    // find item with key
     {
         int hashVal = hashFunc(key);  // hash the key
 
         while (hashArray[hashVal] != null)  // until empty cell,
         {                               // found the key?
-            if (hashArray[hashVal].getKey() == key)
+            if (key.equals(hashArray[hashVal].getKey()))
                 return hashArray[hashVal];   // yes, return item
             ++hashVal;                 // go to next cell
             hashVal %= arraySize;      // wraparound if necessary
@@ -121,7 +128,7 @@ class HashTableApp {
         {
             aKey = (int) (java.lang.Math.random() *
                     keysPerCell * size);
-            aDataItem = new DataItem(aKey);
+            aDataItem = new DataItem(String.valueOf(aKey));
             theHashTable.insert(aDataItem);
         }
 
@@ -136,23 +143,23 @@ class HashTableApp {
                     break;
                 case 'i':
                     System.out.print("Enter key value to insert: ");
-                    aKey = getInt();
-                    aDataItem = new DataItem(aKey);
+                    String insert = getString().toLowerCase();
+                    aDataItem = new DataItem(insert);
                     theHashTable.insert(aDataItem);
                     break;
                 case 'd':
                     System.out.print("Enter key value to delete: ");
-                    aKey = getInt();
-                    theHashTable.delete(aKey);
+                    String delete = getString().toLowerCase();
+                    theHashTable.delete(delete);
                     break;
                 case 'f':
                     System.out.print("Enter key value to find: ");
-                    aKey = getInt();
-                    aDataItem = theHashTable.find(aKey);
+                    String find = getString().toLowerCase();
+                    aDataItem = theHashTable.find(find);
                     if (aDataItem != null) {
-                        System.out.println("Found " + aKey);
+                        System.out.println("Found " + find);
                     } else
-                        System.out.println("Could not find " + aKey);
+                        System.out.println("Could not find " + find);
                     break;
                 default:
                     System.out.print("Invalid entry\n");
