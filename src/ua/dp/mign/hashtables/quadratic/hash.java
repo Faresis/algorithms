@@ -60,12 +60,16 @@ class HashTable {
         int key = item.getKey();      // extract key
         int hashVal = hashFunc(key);  // hash the key
         // until empty cell or -1,
-        while (hashArray[hashVal] != null &&
-                hashArray[hashVal].getKey() != -1) {
-            ++hashVal;                 // go to next cell
-            hashVal %= arraySize;      // wraparound if necessary
+        int count = 1;
+        int probe = hashVal;
+        while (hashArray[probe] != null &&
+                hashArray[probe].getKey() != -1) {
+
+            probe = hashVal + count * count;
+            probe %= arraySize;      // wraparound if necessary
+            count++;
         }
-        hashArray[hashVal] = item;    // insert item
+        hashArray[probe] = item;    // insert item
     }  // end insert()
 
     // -------------------------------------------------------------
@@ -73,15 +77,19 @@ class HashTable {
     {
         int hashVal = hashFunc(key);  // hash the key
 
-        while (hashArray[hashVal] != null)  // until empty cell,
+        int count = 1;
+        int probe = hashVal;
+        while (hashArray[probe] != null)  // until empty cell,
         {                               // found the key?
-            if (hashArray[hashVal].getKey() == key) {
-                DataItem temp = hashArray[hashVal]; // save item
-                hashArray[hashVal] = nonItem;       // delete item
+            if (hashArray[probe].getKey() == key) {
+                DataItem temp = hashArray[probe]; // save item
+                hashArray[probe] = nonItem;       // delete item
                 return temp;                        // return item
             }
-            ++hashVal;                 // go to next cell
-            hashVal %= arraySize;      // wraparound if necessary
+
+            probe = hashVal + count * count;
+            probe %= arraySize;      // wraparound if necessary
+            count++;
         }
         return null;                  // can't find item
     }  // end delete()
@@ -91,12 +99,16 @@ class HashTable {
     {
         int hashVal = hashFunc(key);  // hash the key
 
-        while (hashArray[hashVal] != null)  // until empty cell,
+        int count = 1;
+        int probe = hashVal;
+        while (hashArray[probe] != null)  // until empty cell,
         {                               // found the key?
-            if (hashArray[hashVal].getKey() == key)
-                return hashArray[hashVal];   // yes, return item
-            ++hashVal;                 // go to next cell
-            hashVal %= arraySize;      // wraparound if necessary
+            if (hashArray[probe].getKey() == key)
+                return hashArray[probe];   // yes, return item
+
+            probe = hashVal + count * count;
+            probe %= arraySize;      // wraparound if necessary
+            count++;
         }
         return null;                  // can't find item
     }
