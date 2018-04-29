@@ -3,7 +3,9 @@ package ua.dp.mign.hashtables.functions;
 // demonstrates hash table with linear probing
 // to run this program: C:>java HashTableApp
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 ////////////////////////////////////////////////////////////////
 class DataItem {                                // (could have more data)
@@ -26,14 +28,25 @@ class DataItem {                                // (could have more data)
 class HashTable {
     private DataItem[] hashArray;    // array holds hash table
     private int arraySize;
+    private int groupSize;
     private DataItem nonItem;        // for deleted items
 
     // -------------------------------------------------------------
     public HashTable(int size)       // constructor
     {
         arraySize = size;
+        groupSize = getDigitCount(size) - 1;
         hashArray = new DataItem[arraySize];
         nonItem = new DataItem(-1);   // deleted item key is -1
+    }
+
+    static int getDigitCount(int size) {
+        int numDigits = 1;
+        while (size > 9) {
+            size /= 10;
+            numDigits++;
+        }
+        return numDigits;
     }
 
     // -------------------------------------------------------------
@@ -50,7 +63,23 @@ class HashTable {
 
     // -------------------------------------------------------------
     public int hashFunc(int key) {
-        return key % arraySize;       // hash function
+        int keyDigitCount = getDigitCount(key);
+        int groupSum = 0;
+        String keyString = Integer.toString(key);
+        int i;
+        for (i = 0; i < keyString.length(); i += groupSize) {
+            if (i + groupSize <= keyString.length()) {
+                String group = keyString.substring(i, i + groupSize);
+                groupSum += Integer.parseInt(group);
+            }
+        }
+        // There is no remaining part if count is divisible by groupsize.
+        if (keyDigitCount % groupSize != 0) {
+            String remainingPart =
+                    keyString.substring(i - groupSize, keyString.length());
+            groupSum += Integer.parseInt(remainingPart);
+        }
+        return groupSum % arraySize;
     }
 
     // -------------------------------------------------------------
