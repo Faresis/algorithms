@@ -29,10 +29,12 @@ class HashTable {
     private DataItem[] hashArray;    // array holds hash table
     private int arraySize;
     private DataItem nonItem;        // for deleted items
+    private int numOfItems;
 
     // -------------------------------------------------------------
     public HashTable(int size)       // constructor
     {
+        numOfItems = 0;
         arraySize = size;
         hashArray = new DataItem[arraySize];
         nonItem = new DataItem(-1);   // deleted item key is -1
@@ -68,7 +70,26 @@ class HashTable {
             hashVal %= arraySize;      // wraparound if necessary
         }
         hashArray[hashVal] = item;    // insert item
+        numOfItems++;
+
+        rehash();
     }  // end insert()
+
+    private void rehash() {
+        if (numOfItems == 0 || arraySize / numOfItems >= 2)
+            return;
+
+        DataItem[] oldArray = this.hashArray;
+        this.arraySize = oldArray.length * 2;
+        this.hashArray = new DataItem[arraySize];
+        this.numOfItems = 0;
+
+        for (DataItem dataItem : oldArray) {
+            if (dataItem != null && dataItem.getKey() != -1) {
+                this.insert(dataItem);
+            }
+        }
+    }
 
     // -------------------------------------------------------------
     public DataItem delete(int key)  // delete a DataItem
@@ -80,6 +101,7 @@ class HashTable {
             if (hashArray[hashVal].getKey() == key) {
                 DataItem temp = hashArray[hashVal]; // save item
                 hashArray[hashVal] = nonItem;       // delete item
+                numOfItems--;
                 return temp;                        // return item
             }
             ++hashVal;                 // go to next cell
