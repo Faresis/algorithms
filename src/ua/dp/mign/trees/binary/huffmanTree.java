@@ -1,14 +1,18 @@
 package ua.dp.mign.trees.binary;// tree.java
 
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import static java.util.Comparator.comparing;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 ////////////////////////////////////////////////////////////////
 class HuffmanNode {
@@ -100,7 +104,7 @@ class HuffmanTreeApp {
     }  // end main()
 
     private static String encode(String plainText, Map<Character, String> dictionary) {
-        return plainText.chars().mapToObj(c -> dictionary.get(Character.valueOf((char)c))).collect(Collectors.joining());
+        return plainText.chars().mapToObj(c -> dictionary.get(Character.valueOf((char)c))).collect(joining());
     }
 
     private static String decode(String decodedText, Map<String, Character> dictionary) {
@@ -117,15 +121,15 @@ class HuffmanTreeApp {
     }
 
     private static HuffmanTree buildTree(String string) {
-        Map<Character, Integer> frequency = string.chars()
+        Map<Character, Long> frequency = string.chars()
                 .mapToObj(c -> Character.valueOf((char) c))
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.summingInt(e -> 1)));
+                .collect(groupingBy(identity(), counting()));
 
         List<HuffmanNode> nodes = frequency.entrySet().stream()
                 .map(e -> new HuffmanNode(e.getKey().charValue(), e.getValue().intValue()))
-                .collect(Collectors.toList());
+                .collect(toList());
 
-        PriorityQueue<HuffmanNode> queue = new PriorityQueue<>(Comparator.comparing(HuffmanNode::getFrequency));
+        PriorityQueue<HuffmanNode> queue = new PriorityQueue<>(comparing(HuffmanNode::getFrequency));
         queue.addAll(nodes);
 
         while (queue.size() != 1) {
@@ -140,15 +144,8 @@ class HuffmanTreeApp {
         return new HuffmanTree(queue.remove());
     }
 
-    private static LinkedHashMap<Character, Integer> orderByValue(Map<Character, Integer> map) {
-        return map.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-    }
-
     private static <K, V> Map<V, K> inverse(Map<K, V> map) {
-        return map.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        return map.entrySet().stream().collect(toMap(Map.Entry::getValue, Map.Entry::getKey));
     }
 }  // end class TreeApp
 ////////////////////////////////////////////////////////////////
