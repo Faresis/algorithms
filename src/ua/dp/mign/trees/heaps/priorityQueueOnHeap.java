@@ -170,12 +170,12 @@ class InternalHeap {
 }  // end class Heap
 
 ////////////////////////////////////////////////////////////////
-class PriorityQ {
+class PriorityQueueOnHeap {
     // array in sorted order, from max at 0 to min at size-1
     private final InternalHeap heap;
 
     //-------------------------------------------------------------
-    public PriorityQ(int s)          // constructor
+    public PriorityQueueOnHeap(int s)          // constructor
     {
         this.heap = new InternalHeap(s);
     }
@@ -213,9 +213,9 @@ class PriorityQ {
 }  // end class PriorityQ
 
 ////////////////////////////////////////////////////////////////
-class PriorityQApp {
+class PriorityQueueHeapApp {
     public static void main(String[] args) {
-        PriorityQ thePQ = new PriorityQ(5);
+        PriorityQueueOnHeap thePQ = new PriorityQueueOnHeap(5);
         thePQ.insert(30);
         thePQ.insert(50);
         thePQ.insert(10);
