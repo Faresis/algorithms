@@ -5,22 +5,22 @@ package ua.dp.mign.trees.heaps;
 // to run this program: C>java PriorityQApp
 ////////////////////////////////////////////////////////////////
 class InternalHeapNode {
-    private int iData;             // data item (key)
+    private long lData;             // data item (key)
 
     // -------------------------------------------------------------
-    public InternalHeapNode(int key)           // constructor
+    public InternalHeapNode(long key)           // constructor
     {
-        iData = key;
+        lData = key;
     }
 
     // -------------------------------------------------------------
-    public int getKey() {
-        return iData;
+    public long getKey() {
+        return lData;
     }
 
     // -------------------------------------------------------------
-    public void setKey(int id) {
-        iData = id;
+    public void setKey(long id) {
+        lData = id;
     }
 // -------------------------------------------------------------
 }  // end class Node
@@ -44,8 +44,12 @@ class InternalHeap {
         return currentSize == 0;
     }
 
+    public boolean isFull() {
+        return currentSize == maxSize;
+    }
+
     // -------------------------------------------------------------
-    public boolean insert(int key) {
+    public boolean insert(long key) {
         if (currentSize == maxSize)
             return false;
         InternalHeapNode newNode = new InternalHeapNode(key);
@@ -77,6 +81,12 @@ class InternalHeap {
         return root;
     }  // end remove()
 
+
+    public InternalHeapNode peek()
+    {
+        return heapArray[0];
+    }
+
     // -------------------------------------------------------------
     public void trickleDown(int index) {
         int largerChild;
@@ -103,10 +113,10 @@ class InternalHeap {
     }  // end trickleDown()
 
     // -------------------------------------------------------------
-    public boolean change(int index, int newValue) {
+    public boolean change(int index, long newValue) {
         if (index < 0 || index >= currentSize)
             return false;
-        int oldValue = heapArray[index].getKey(); // remember old
+        long oldValue = heapArray[index].getKey(); // remember old
         heapArray[index].setKey(newValue);  // change to new
 
         if (oldValue < newValue)             // if raised,
@@ -162,61 +172,42 @@ class InternalHeap {
 ////////////////////////////////////////////////////////////////
 class PriorityQ {
     // array in sorted order, from max at 0 to min at size-1
-    private int maxSize;
-    private long[] queArray;
-    private int nItems;
+    private final InternalHeap heap;
 
     //-------------------------------------------------------------
     public PriorityQ(int s)          // constructor
     {
-        maxSize = s;
-        queArray = new long[maxSize];
-        nItems = 0;
+        this.heap = new InternalHeap(s);
     }
 
     //-------------------------------------------------------------
     public void insert(long item)    // insert item
     {
-        int j;
-
-        if (nItems == 0)                         // if no items,
-            queArray[nItems++] = item;         // insert at 0
-        else                                // if items,
-        {
-            for (j = nItems - 1; j >= 0; j--)         // start at end,
-            {
-                if (item > queArray[j])      // if new item larger,
-                    queArray[j + 1] = queArray[j]; // shift upward
-                else                          // if smaller,
-                    break;                     // done shifting
-            }  // end for
-            queArray[j + 1] = item;            // insert it
-            nItems++;
-        }  // end else (nItems > 0)
+        this.heap.insert(item);
     }  // end insert()
 
     //-------------------------------------------------------------
     public long remove()             // remove minimum item
     {
-        return queArray[--nItems];
+        return heap.remove().getKey();
     }
 
     //-------------------------------------------------------------
-    public long peekMin()            // peek at minimum item
+    public long peek()
     {
-        return queArray[nItems - 1];
+        return heap.peek().getKey();
     }
 
     //-------------------------------------------------------------
     public boolean isEmpty()         // true if queue is empty
     {
-        return (nItems == 0);
+        return heap.isEmpty();
     }
 
     //-------------------------------------------------------------
     public boolean isFull()          // true if queue is full
     {
-        return (nItems == maxSize);
+        return heap.isFull();
     }
 //-------------------------------------------------------------
 }  // end class PriorityQ
@@ -233,7 +224,7 @@ class PriorityQApp {
 
         while (!thePQ.isEmpty()) {
             long item = thePQ.remove();
-            System.out.print(item + " ");  // 10, 20, 30, 40, 50
+            System.out.print(item + " ");  // 50, 40, 30, 20, 10
         }  // end while
         System.out.println("");
     }  // end main()
