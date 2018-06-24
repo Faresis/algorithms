@@ -60,6 +60,18 @@ class Heap {
         return true;
     }  // end insert()
 
+    public boolean toss(int key) {
+        if (currentSize == maxSize)
+            return false;
+        heapArray[currentSize++] = new Node(key);
+        return true;
+    }  // end insert()
+
+    public void restoreHeap() {
+        for (int i = currentSize/2 - 1; i >= 0; --i) {
+            trickleDown(i);
+        }
+    }
     // -------------------------------------------------------------
     public void trickleUp(int index) {
         int parent = (index - 1) / 2;
@@ -173,25 +185,28 @@ class HeapApp {
         Heap theHeap = new Heap(31, comp.reversed());  // make a Heap; max size 31
         boolean success;
 
-        theHeap.insert(70);           // insert 10 items
-        theHeap.insert(40);
-        theHeap.insert(50);
-        theHeap.insert(20);
-        theHeap.insert(60);
-        theHeap.insert(100);
-        theHeap.insert(80);
-        theHeap.insert(30);
-        theHeap.insert(10);
-        theHeap.insert(90);
+        theHeap.toss(70);           // insert 10 items
+        theHeap.toss(40);
+        theHeap.toss(50);
+        theHeap.toss(20);
+        theHeap.toss(60);
+        theHeap.toss(100);
+        theHeap.toss(80);
+        theHeap.toss(30);
+        theHeap.toss(10);
+        theHeap.toss(90);
 
         while (true)                   // until [Ctrl]-[C]
         {
             System.out.print("Enter first letter of ");
-            System.out.print("show, insert, remove, change: ");
+            System.out.print("show, insert, remove, change, toss, heap: ");
             int choice = getChar();
             switch (choice) {
                 case 's':                        // show
                     theHeap.displayHeap();
+                    break;
+                case 'h':                        // heap
+                    theHeap.restoreHeap();
                     break;
                 case 'i':                        // insert
                     System.out.print("Enter value to insert: ");
@@ -199,6 +214,13 @@ class HeapApp {
                     success = theHeap.insert(value);
                     if (!success)
                         System.out.println("Can't insert; heap full");
+                    break;
+                case 't':                        // toss
+                    System.out.print("Enter value to toss: ");
+                    value = getInt();
+                    success = theHeap.toss(value);
+                    if (!success)
+                        System.out.println("Can't toss; heap full");
                     break;
                 case 'r':                        // remove
                     if (!theHeap.isEmpty())
