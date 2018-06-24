@@ -2,7 +2,10 @@ package ua.dp.mign.trees.heaps;// heap.java
 // demonstrates heaps
 // to run this program: C>java HeapApp
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Comparator;
 
 ////////////////////////////////////////////////////////////////
 class Node {
@@ -31,13 +34,15 @@ class Heap {
     private Node[] heapArray;
     private int maxSize;           // size of array
     private int currentSize;       // number of nodes in array
+    private final Comparator<Integer> comparator;
 
     // -------------------------------------------------------------
-    public Heap(int mx)            // constructor
+    public Heap(int mx, Comparator<Integer> comparator)            // constructor
     {
         maxSize = mx;
         currentSize = 0;
         heapArray = new Node[maxSize];  // create array
+        this.comparator = comparator;
     }
 
     // -------------------------------------------------------------
@@ -61,7 +66,7 @@ class Heap {
         Node bottom = heapArray[index];
 
         while (index > 0 &&
-                heapArray[parent].getKey() < bottom.getKey()) {
+                comparator.compare(heapArray[parent].getKey(), bottom.getKey()) < 0) {
             heapArray[index] = heapArray[parent];  // move it down
             index = parent;
             parent = (parent - 1) / 2;
@@ -88,13 +93,13 @@ class Heap {
             int rightChild = leftChild + 1;
             // find larger child
             if (rightChild < currentSize &&  // (rightChild exists?)
-                    heapArray[leftChild].getKey() <
-                            heapArray[rightChild].getKey())
+                    comparator.compare(heapArray[leftChild].getKey(),
+                            heapArray[rightChild].getKey()) < 0)
                 largerChild = rightChild;
             else
                 largerChild = leftChild;
             // top >= largerChild?
-            if (top.getKey() >= heapArray[largerChild].getKey())
+            if (comparator.compare(top.getKey(), heapArray[largerChild].getKey()) >= 0)
                 break;
             // shift child up
             heapArray[index] = heapArray[largerChild];
@@ -110,7 +115,7 @@ class Heap {
         int oldValue = heapArray[index].getKey(); // remember old
         heapArray[index].setKey(newValue);  // change to new
 
-        if (oldValue < newValue)             // if raised,
+        if (comparator.compare(oldValue, newValue) < 0)             // if raised,
             trickleUp(index);                // trickle it up
         else                                // if lowered,
             trickleDown(index);              // trickle it down
@@ -164,7 +169,8 @@ class Heap {
 class HeapApp {
     public static void main(String[] args) throws IOException {
         int value, value2;
-        Heap theHeap = new Heap(31);  // make a Heap; max size 31
+        Comparator<Integer> comp = Integer::compareTo;
+        Heap theHeap = new Heap(31, comp.reversed());  // make a Heap; max size 31
         boolean success;
 
         theHeap.insert(70);           // insert 10 items
