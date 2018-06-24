@@ -8,14 +8,14 @@ package ua.dp.mign.trees.heaps;
 import java.util.Stack;
 
 class InternalTreeNode {
-    public int iData;              // data item (key)
+    public long lData;              // data item (key)
     public InternalTreeNode leftChild;         // this node's left child
     public InternalTreeNode rightChild;        // this node's right child
 
     public void displayNode()      // display ourself
     {
         System.out.print('{');
-        System.out.print(iData);
+        System.out.print(lData);
         System.out.print("} ");
     }
 }  // end class Node
@@ -34,9 +34,9 @@ class InternalTree {
     public InternalTreeNode find(int key)      // find node with given key
     {                           // (assumes non-empty tree)
         InternalTreeNode current = root;               // start at root
-        while (current.iData != key)        // while no match,
+        while (current.lData != key)        // while no match,
         {
-            if (key < current.iData)         // go left?
+            if (key < current.lData)         // go left?
                 current = current.leftChild;
             else                            // or go right?
                 current = current.rightChild;
@@ -47,9 +47,9 @@ class InternalTree {
     }  // end find()
 
     // -------------------------------------------------------------
-    public void insert(int id) {
+    public void insert(long id) {
         InternalTreeNode newNode = new InternalTreeNode();    // make new node
-        newNode.iData = id;           // insert data
+        newNode.lData = id;           // insert data
         if (root == null)                // no node in root
             root = newNode;
         else                          // root occupied
@@ -59,7 +59,7 @@ class InternalTree {
             while (true)                // (exits internally)
             {
                 parent = current;
-                if (id < current.iData)  // go left?
+                if (id < current.lData)  // go left?
                 {
                     current = current.leftChild;
                     if (current == null)  // if end of the line,
@@ -88,10 +88,10 @@ class InternalTree {
         InternalTreeNode parent = root;
         boolean isLeftChild = true;
 
-        while (current.iData != key)        // search for node
+        while (current.lData != key)        // search for node
         {
             parent = current;
-            if (key < current.iData)         // go left?
+            if (key < current.lData)         // go left?
             {
                 isLeftChild = true;
                 current = current.leftChild;
@@ -198,7 +198,7 @@ class InternalTree {
     // -------------------------------------------------------------
     private void preOrder(InternalTreeNode localRoot) {
         if (localRoot != null) {
-            System.out.print(localRoot.iData + " ");
+            System.out.print(localRoot.lData + " ");
             preOrder(localRoot.leftChild);
             preOrder(localRoot.rightChild);
         }
@@ -208,7 +208,7 @@ class InternalTree {
     private void inOrder(InternalTreeNode localRoot) {
         if (localRoot != null) {
             inOrder(localRoot.leftChild);
-            System.out.print(localRoot.iData + " ");
+            System.out.print(localRoot.lData + " ");
             inOrder(localRoot.rightChild);
         }
     }
@@ -218,7 +218,7 @@ class InternalTree {
         if (localRoot != null) {
             postOrder(localRoot.leftChild);
             postOrder(localRoot.rightChild);
-            System.out.print(localRoot.iData + " ");
+            System.out.print(localRoot.lData + " ");
         }
     }
 
@@ -240,7 +240,7 @@ class InternalTree {
             while (globalStack.isEmpty() == false) {
                 InternalTreeNode temp = (InternalTreeNode) globalStack.pop();
                 if (temp != null) {
-                    System.out.print(temp.iData);
+                    System.out.print(temp.lData);
                     localStack.push(temp.leftChild);
                     localStack.push(temp.rightChild);
 
@@ -263,86 +263,116 @@ class InternalTree {
         System.out.println(
                 "......................................................");
     }  // end displayTree()
+
+    public boolean isEmpty() {
+        return root == null;
+    }
+
+    public long removeMax() {
+        InternalTreeNode max = root;
+        InternalTreeNode parent = null;
+
+        while (max.rightChild != null) {
+            parent = max;
+            max = max.rightChild;
+        }
+
+        if (parent == null) {
+            root = max.leftChild;
+        } else {
+            parent.rightChild = max.leftChild;
+        }
+
+        return max.lData;
+    }
+
+    public long getMax() {
+        InternalTreeNode max = root;
+        while (max.rightChild != null) {
+            max = max.rightChild;
+        }
+        return max.lData;
+    }
 // -------------------------------------------------------------
 }  // end class Tree
 
 ////////////////////////////////////////////////////////////////
 class PriorityQueueOnTree {
-    // array in sorted order, from max at 0 to min at size-1
-    private int maxSize;
-    private long[] queArray;
-    private int nItems;
+
+    private final InternalTree tree;
 
     //-------------------------------------------------------------
-    public PriorityQueueOnTree(int s)          // constructor
+    public PriorityQueueOnTree()          // constructor
     {
-        maxSize = s;
-        queArray = new long[maxSize];
-        nItems = 0;
+        this.tree = new InternalTree();
     }
 
     //-------------------------------------------------------------
     public void insert(long item)    // insert item
     {
-        int j;
-
-        if (nItems == 0)                         // if no items,
-            queArray[nItems++] = item;         // insert at 0
-        else                                // if items,
-        {
-            for (j = nItems - 1; j >= 0; j--)         // start at end,
-            {
-                if (item > queArray[j])      // if new item larger,
-                    queArray[j + 1] = queArray[j]; // shift upward
-                else                          // if smaller,
-                    break;                     // done shifting
-            }  // end for
-            queArray[j + 1] = item;            // insert it
-            nItems++;
-        }  // end else (nItems > 0)
+        this.tree.insert(item);
     }  // end insert()
 
     //-------------------------------------------------------------
-    public long remove()             // remove minimum item
+    public long remove()             // remove max item
     {
-        return queArray[--nItems];
+        return this.tree.removeMax();
     }
 
     //-------------------------------------------------------------
-    public long peekMin()            // peek at minimum item
+    public long peekMin()            // peek max item
     {
-        return queArray[nItems - 1];
+        return this.tree.getMax();
     }
 
     //-------------------------------------------------------------
     public boolean isEmpty()         // true if queue is empty
     {
-        return (nItems == 0);
+        return this.tree.isEmpty();
     }
 
     //-------------------------------------------------------------
     public boolean isFull()          // true if queue is full
     {
-        return (nItems == maxSize);
+        return false;
     }
-//-------------------------------------------------------------
+
+    public void print() {
+        this.tree.displayTree();
+    }
+    //-------------------------------------------------------------
 }  // end class PriorityQ
 
 ////////////////////////////////////////////////////////////////
 class PriorityQueueTreeApp {
     public static void main(String[] args) {
-        PriorityQueueOnTree thePQ = new PriorityQueueOnTree(5);
+        PriorityQueueOnTree thePQ = new PriorityQueueOnTree();
         thePQ.insert(30);
         thePQ.insert(50);
         thePQ.insert(10);
         thePQ.insert(40);
+        thePQ.insert(39);
+        thePQ.insert(41);
         thePQ.insert(20);
+        thePQ.insert(54);
+        thePQ.insert(56);
+        thePQ.insert(51);
+        thePQ.insert(49);
+        thePQ.insert(8);
+        thePQ.insert(1);
+        thePQ.insert(4);
+        thePQ.insert(3);
+        thePQ.insert(7);
+
+        thePQ.print();
 
         while (!thePQ.isEmpty()) {
             long item = thePQ.remove();
-            System.out.print(item + " ");  // 10, 20, 30, 40, 50
+            System.out.print(item + " ");  // 56, 54, 51, 50, 49, 41, 40, 39, 30, 20, 10, 8, 7, 4, 3, 1
         }  // end while
         System.out.println("");
+
+        thePQ.print();
     }  // end main()
 //-------------------------------------------------------------
 }  // end class PriorityQApp
