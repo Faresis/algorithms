@@ -9,138 +9,174 @@ import java.util.Comparator;
 
 ////////////////////////////////////////////////////////////////
 class HeapOnTreeNode {
-    private int iData;             // data item (key)
+    private int iData;
+    private HeapOnTreeNode parent;
+    private HeapOnTreeNode leftChild;
+    private HeapOnTreeNode rightChild;
 
     // -------------------------------------------------------------
-    public HeapOnTreeNode(int key)           // constructor
-    {
+    public HeapOnTreeNode(int key, HeapOnTreeNode parent) {
         iData = key;
+        this.parent = parent;
     }
 
-    // -------------------------------------------------------------
     public int getKey() {
         return iData;
     }
 
-    // -------------------------------------------------------------
     public void setKey(int id) {
         iData = id;
     }
-// -------------------------------------------------------------
-}  // end class Node
+
+    public HeapOnTreeNode getParent() {
+        return parent;
+    }
+
+    public HeapOnTreeNode getLeftChild() {
+        return leftChild;
+    }
+
+    public HeapOnTreeNode getRightChild() {
+        return rightChild;
+    }
+
+    public void setLeftChild(HeapOnTreeNode leftChild) {
+        this.leftChild = leftChild;
+    }
+
+    public void setRightChild(HeapOnTreeNode rightChild) {
+        this.rightChild = rightChild;
+    }
+
+    public boolean hasChildren() {
+        return leftChild != null || rightChild != null;
+    }
+
+    public HeapOnTreeNode getLargestChild(Comparator<Integer> comparator) {
+        if (leftChild != null && rightChild != null) {
+            if (comparator.compare(leftChild.getKey(), rightChild.getKey()) < 0) {
+                return rightChild;
+            } else {
+                return leftChild;
+            }
+        } else if (!hasChildren()) {
+            return null;
+        } else {
+            return leftChild;
+        }
+    }
+
+    public void disconnect(HeapOnTreeNode child) {
+        if (child == rightChild) {
+            rightChild = null;
+        } else {
+            leftChild = null;
+        }
+    }
+}
 
 ////////////////////////////////////////////////////////////////
 class HeapOnTree {
-    private HeapOnTreeNode[] heapArray;
-    private int maxSize;           // size of array
+    private HeapOnTreeNode root;
     private int currentSize;       // number of nodes in array
     private final Comparator<Integer> comparator;
 
-    // -------------------------------------------------------------
-    public HeapOnTree(int mx, Comparator<Integer> comparator)            // constructor
-    {
-        maxSize = mx;
+    public HeapOnTree(Comparator<Integer> comparator) {
         currentSize = 0;
-        heapArray = new HeapOnTreeNode[maxSize];  // create array
         this.comparator = comparator;
     }
 
-    // -------------------------------------------------------------
     public boolean isEmpty() {
         return currentSize == 0;
     }
 
-    // -------------------------------------------------------------
-    public boolean insert(int key) {
-        if (currentSize == maxSize)
-            return false;
-        HeapOnTreeNode newNode = new HeapOnTreeNode(key);
-        heapArray[currentSize] = newNode;
-        trickleUp(currentSize++);
-        return true;
-    }  // end insert()
+    public void insert(int key) {
+        trickleUp(createNode(++currentSize, key));
+    }
 
-    public boolean toss(int key) {
-        if (currentSize == maxSize)
-            return false;
-        heapArray[currentSize++] = new HeapOnTreeNode(key);
-        return true;
-    }  // end insert()
+    public void toss(int key) {
+        createNode(++currentSize, key);
+    }
 
     public void restoreHeap() {
-        for (int i = currentSize / 2 - 1; i >= 0; --i) {
-            trickleDown(i);
+        int current = 1;
+        int lastRightParent = current;
+        while (current <= currentSize) {
+            lastRightParent = current;
+            current = current * 2 + 1;
+        }
+
+        for (int i = lastRightParent; i >= 1; --i) {
+            trickleDown(getNode(i));
+        }
+    }
+
+    public void trickleUp(HeapOnTreeNode node) {
+        int bottom = node.getKey();
+
+        HeapOnTreeNode current = node;
+        while (current.getParent() != null && comparator.compare(current.getParent().getKey(), bottom) < 0) {
+            current.setKey(current.getParent().getKey());
+            current = current.getParent();
+        }
+        current.setKey(bottom);
+    }
+
+    // -------------------------------------------------------------
+    public int remove() {
+        if (currentSize == 0) {
+            throw new IllegalStateException("Heap is empty.");
+        }
+
+        int result = root.getKey();
+        HeapOnTreeNode last = getNode(currentSize);
+        root.setKey(last.getKey());
+        disconnect(last);
+        currentSize--;
+        if (root != null) {
+            trickleDown(root);
+        }
+        return result;
+    }
+
+    public void trickleDown(HeapOnTreeNode node) {
+        int top = node.getKey();
+
+        HeapOnTreeNode current = node;
+        while (current.hasChildren()) {
+            HeapOnTreeNode largestChild = current.getLargestChild(comparator);
+
+            if (comparator.compare(top, largestChild.getKey()) >= 0)
+                break;
+
+            current.setKey(largestChild.getKey());
+            current = largestChild;
+        }
+        current.setKey(top);
+    }
+
+    public void change(int index, int newValue) {
+        if (index < 1 || index > currentSize) {
+            throw new IllegalStateException("Index out of heap bounds.");
+        }
+
+        HeapOnTreeNode node = getNode(index);
+        int oldValue = node.getKey();
+        node.setKey(newValue);
+
+        if (comparator.compare(oldValue, newValue) < 0) {
+            trickleUp(node);
+        } else {
+            trickleDown(node);
         }
     }
 
     // -------------------------------------------------------------
-    public void trickleUp(int index) {
-        int parent = (index - 1) / 2;
-        HeapOnTreeNode bottom = heapArray[index];
-
-        while (index > 0 &&
-                comparator.compare(heapArray[parent].getKey(), bottom.getKey()) < 0) {
-            heapArray[index] = heapArray[parent];  // move it down
-            index = parent;
-            parent = (parent - 1) / 2;
-        }  // end while
-        heapArray[index] = bottom;
-    }  // end trickleUp()
-
-    // -------------------------------------------------------------
-    public HeapOnTreeNode remove()           // delete item with max key
-    {                           // (assumes non-empty list)
-        HeapOnTreeNode root = heapArray[0];
-        heapArray[0] = heapArray[--currentSize];
-        trickleDown(0);
-        return root;
-    }  // end remove()
-
-    // -------------------------------------------------------------
-    public void trickleDown(int index) {
-        int largerChild;
-        HeapOnTreeNode top = heapArray[index];       // save root
-        while (index < currentSize / 2)       // while node has at
-        {                               //    least one child,
-            int leftChild = 2 * index + 1;
-            int rightChild = leftChild + 1;
-            // find larger child
-            if (rightChild < currentSize &&  // (rightChild exists?)
-                    comparator.compare(heapArray[leftChild].getKey(),
-                            heapArray[rightChild].getKey()) < 0)
-                largerChild = rightChild;
-            else
-                largerChild = leftChild;
-            // top >= largerChild?
-            if (comparator.compare(top.getKey(), heapArray[largerChild].getKey()) >= 0)
-                break;
-            // shift child up
-            heapArray[index] = heapArray[largerChild];
-            index = largerChild;            // go down
-        }  // end while
-        heapArray[index] = top;            // root to index
-    }  // end trickleDown()
-
-    // -------------------------------------------------------------
-    public boolean change(int index, int newValue) {
-        if (index < 0 || index >= currentSize)
-            return false;
-        int oldValue = heapArray[index].getKey(); // remember old
-        heapArray[index].setKey(newValue);  // change to new
-
-        if (comparator.compare(oldValue, newValue) < 0)             // if raised,
-            trickleUp(index);                // trickle it up
-        else                                // if lowered,
-            trickleDown(index);              // trickle it down
-        return true;
-    }  // end change()
-
-    // -------------------------------------------------------------
     public void displayHeap() {
         System.out.print("heapArray: ");    // array format
-        for (int m = 0; m < currentSize; m++)
-            if (heapArray[m] != null)
-                System.out.print(heapArray[m].getKey() + " ");
+        for (int m = 1; m <= currentSize; m++)
+            if (getNode(m) != null)
+                System.out.print(getNode(m).getKey() + " ");
             else
                 System.out.print("-- ");
         System.out.println();
@@ -148,7 +184,7 @@ class HeapOnTree {
         int nBlanks = 32;
         int itemsPerRow = 1;
         int column = 0;
-        int j = 0;                          // current item
+        int j = 1;                          // current item
         String dots = "...............................";
         System.out.println(dots + dots);      // dotted top line
 
@@ -158,9 +194,9 @@ class HeapOnTree {
                 for (int k = 0; k < nBlanks; k++)  // preceding blanks
                     System.out.print(' ');
             // display item
-            System.out.print(heapArray[j].getKey());
+            System.out.print(getNode(j).getKey());
 
-            if (++j == currentSize)           // done?
+            if (j++ == currentSize)           // done?
                 break;
 
             if (++column == itemsPerRow)        // end of row?
@@ -175,16 +211,63 @@ class HeapOnTree {
         }  // end for
         System.out.println("\n" + dots + dots); // dotted bottom line
     }  // end displayHeap()
-// -------------------------------------------------------------
+
+    public HeapOnTreeNode getNode(int index) {
+        if (index < 1 || index > currentSize) {
+            throw new IllegalStateException("Index out of heap bounds.");
+        }
+
+        if (index == 1) {
+            return root;
+        }
+
+        boolean left = index % 2 == 0;
+        HeapOnTreeNode node = getNode(index / 2);
+        return left ? node.getLeftChild() : node.getRightChild();
+    }
+
+    private HeapOnTreeNode createNode(int index, int key) {
+        if (index < 1 || index > currentSize) {
+            throw new IllegalStateException("Index out of heap bounds.");
+        }
+
+        if (index == 1) {
+            if (root == null) {
+                root = new HeapOnTreeNode(key, null);
+            }
+            return root;
+        }
+
+        boolean left = (index % 2) == 0;
+        HeapOnTreeNode node = createNode(index / 2, key);
+        HeapOnTreeNode child = left ? node.getLeftChild() : node.getRightChild();
+        if (child != null) {
+            return child;
+        } else {
+            child = new HeapOnTreeNode(key, node);
+            if (left) {
+                node.setLeftChild(child);
+            } else {
+                node.setRightChild(child);
+            }
+            return child;
+        }
+    }
+
+    private void disconnect(HeapOnTreeNode node) {
+        HeapOnTreeNode parent = node.getParent();
+        if (parent != null) {
+            parent.disconnect(node);
+        } else {
+            root = null;
+        }
+    }
 }  // end class Heap
 
 ////////////////////////////////////////////////////////////////
 class HeapOnTreeApp {
     public static void main(String[] args) throws IOException {
-        int value, value2;
-        Comparator<Integer> comp = Integer::compareTo;
-        HeapOnTree theHeap = new HeapOnTree(31, comp.reversed());  // make a Heap; max size 31
-        boolean success;
+        HeapOnTree theHeap = new HeapOnTree(Integer::compareTo);  // make a Heap; max size 31
 
         theHeap.toss(70);           // insert 10 items
         theHeap.toss(40);
@@ -200,7 +283,7 @@ class HeapOnTreeApp {
         while (true)                   // until [Ctrl]-[C]
         {
             System.out.print("Enter first letter of ");
-            System.out.print("show, insert, remove, change, toss, heap: ");
+            System.out.print("show, insert, remove, change, toss, heap, get: ");
             int choice = getChar();
             switch (choice) {
                 case 's':                        // show
@@ -211,32 +294,28 @@ class HeapOnTreeApp {
                     break;
                 case 'i':                        // insert
                     System.out.print("Enter value to insert: ");
-                    value = getInt();
-                    success = theHeap.insert(value);
-                    if (!success)
-                        System.out.println("Can't insert; heap full");
+                    theHeap.insert(getInt());
                     break;
                 case 't':                        // toss
                     System.out.print("Enter value to toss: ");
-                    value = getInt();
-                    success = theHeap.toss(value);
-                    if (!success)
-                        System.out.println("Can't toss; heap full");
+                    theHeap.toss(getInt());
                     break;
                 case 'r':                        // remove
                     if (!theHeap.isEmpty())
-                        theHeap.remove();
+                        System.out.println("Removed: " + theHeap.remove());
                     else
                         System.out.println("Can't remove; heap empty");
                     break;
                 case 'c':                        // change
                     System.out.print("Enter current index of item: ");
-                    value = getInt();
+                    int value = getInt();
                     System.out.print("Enter new key: ");
-                    value2 = getInt();
-                    success = theHeap.change(value, value2);
-                    if (!success)
-                        System.out.println("Invalid index");
+                    int value2 = getInt();
+                    theHeap.change(value, value2);
+                    break;
+                case 'g':                        // get
+                    System.out.print("Enter index to get: ");
+                    System.out.println(theHeap.getNode(getInt()).getKey());
                     break;
                 default:
                     System.out.println("Invalid entry\n");
