@@ -8,11 +8,11 @@ import java.io.InputStreamReader;
 import java.util.Comparator;
 
 ////////////////////////////////////////////////////////////////
-class Node {
+class HeapOnArrayNode {
     private int iData;             // data item (key)
 
     // -------------------------------------------------------------
-    public Node(int key)           // constructor
+    public HeapOnArrayNode(int key)           // constructor
     {
         iData = key;
     }
@@ -30,18 +30,18 @@ class Node {
 }  // end class Node
 
 ////////////////////////////////////////////////////////////////
-class Heap {
-    private Node[] heapArray;
+class HeapOnArray {
+    private HeapOnArrayNode[] heapArray;
     private int maxSize;           // size of array
     private int currentSize;       // number of nodes in array
     private final Comparator<Integer> comparator;
 
     // -------------------------------------------------------------
-    public Heap(int mx, Comparator<Integer> comparator)            // constructor
+    public HeapOnArray(int mx, Comparator<Integer> comparator)            // constructor
     {
         maxSize = mx;
         currentSize = 0;
-        heapArray = new Node[maxSize];  // create array
+        heapArray = new HeapOnArrayNode[maxSize];  // create array
         this.comparator = comparator;
     }
 
@@ -54,7 +54,7 @@ class Heap {
     public boolean insert(int key) {
         if (currentSize == maxSize)
             return false;
-        Node newNode = new Node(key);
+        HeapOnArrayNode newNode = new HeapOnArrayNode(key);
         heapArray[currentSize] = newNode;
         trickleUp(currentSize++);
         return true;
@@ -63,19 +63,20 @@ class Heap {
     public boolean toss(int key) {
         if (currentSize == maxSize)
             return false;
-        heapArray[currentSize++] = new Node(key);
+        heapArray[currentSize++] = new HeapOnArrayNode(key);
         return true;
     }  // end insert()
 
     public void restoreHeap() {
-        for (int i = currentSize/2 - 1; i >= 0; --i) {
+        for (int i = currentSize / 2 - 1; i >= 0; --i) {
             trickleDown(i);
         }
     }
+
     // -------------------------------------------------------------
     public void trickleUp(int index) {
         int parent = (index - 1) / 2;
-        Node bottom = heapArray[index];
+        HeapOnArrayNode bottom = heapArray[index];
 
         while (index > 0 &&
                 comparator.compare(heapArray[parent].getKey(), bottom.getKey()) < 0) {
@@ -87,9 +88,9 @@ class Heap {
     }  // end trickleUp()
 
     // -------------------------------------------------------------
-    public Node remove()           // delete item with max key
+    public HeapOnArrayNode remove()           // delete item with max key
     {                           // (assumes non-empty list)
-        Node root = heapArray[0];
+        HeapOnArrayNode root = heapArray[0];
         heapArray[0] = heapArray[--currentSize];
         trickleDown(0);
         return root;
@@ -98,7 +99,7 @@ class Heap {
     // -------------------------------------------------------------
     public void trickleDown(int index) {
         int largerChild;
-        Node top = heapArray[index];       // save root
+        HeapOnArrayNode top = heapArray[index];       // save root
         while (index < currentSize / 2)       // while node has at
         {                               //    least one child,
             int leftChild = 2 * index + 1;
@@ -178,11 +179,12 @@ class Heap {
 }  // end class Heap
 
 ////////////////////////////////////////////////////////////////
-class HeapApp {
+class HeapOnArrayApp {
+
     public static void main(String[] args) throws IOException {
         int value, value2;
         Comparator<Integer> comp = Integer::compareTo;
-        Heap theHeap = new Heap(31, comp.reversed());  // make a Heap; max size 31
+        HeapOnArray theHeap = new HeapOnArray(31, comp.reversed());  // make a Heap; max size 31
         boolean success;
 
         theHeap.toss(70);           // insert 10 items
