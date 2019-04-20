@@ -5,48 +5,59 @@ public final class SinglyLinkedCircularList {
     private Link current;
 
     public void add(long data) {
-        Link newLink = new Link(data);
-        if (current == null) {
-            current = newLink;
-            current.setNext(current);
+        Link toInsert = new Link(data);
+
+        if (this.isEmpty()) {
+            this.current = toInsert;
+            toInsert.setNext(this.current);
         } else {
-            newLink.setNext(current.getNext());
-            current.setNext(newLink);
+            toInsert.setNext(this.current.getNext());
+            this.current.setNext(toInsert);
         }
     }
 
     public long remove() {
+    	if (this.isEmpty())
+    	    throw new IllegalStateException();
+
         long result;
-        if (current.getNext() == current) {
-            result = current.getData();
-            current = null;
+        if (this.current.getNext() == this.current) {
+            result = this.current.getData();
+            this.current = null;
         } else {
-            result = current.getNext().getData();
-            current.setNext(current.getNext().getNext());
+            result = this.current.getNext().getData();
+            this.current.setNext(this.current.getNext().getNext());
         }
         return result;
     }
 
     public boolean find(long data) {
-        boolean found = false;
-        Link previous = current;
-        Link toFind = current.getNext();
-        Link end = toFind;
-        do {
-            if (toFind.getData() == data) {
-                found = true;
-                current = previous;
-                break;
-            }
-            previous = toFind;
-            toFind = toFind.getNext();
-        } while (toFind != end);
-        return found;
+    	if (this.isEmpty())
+            throw new IllegalStateException();
+
+    	Link start = this.current;
+    	do {
+      	    if (this.get() == data)
+            return true;
+    	} while (start != this.next());
+    	return false;
+    }
+
+    public long get() {
+    	if (this.isEmpty())
+            throw new IllegalStateException();
+
+    	return this.current.getNext().getData();
     }
 
     public long step() {
-        current = current.getNext();
-        return current.getData();
+        this.next();
+        return this.get();
+    }
+
+    private Link next() {
+        this.current = this.current.getNext();
+        return this.current;
     }
 
     public boolean isEmpty() {
@@ -54,12 +65,24 @@ public final class SinglyLinkedCircularList {
     }
 
     public void display() {
-        Link toDisplay = current;
-        do {
-            System.out.print(toDisplay.getData() + " ");
-            toDisplay = toDisplay.getNext();
-        } while (toDisplay != current);
-        System.out.println();
+        if (this.isEmpty())
+            return;
+
+    	Link start = this.current;
+    	do {
+            System.out.print(this.get() + " ");
+        } while (start != this.next());
+    	System.out.println();
+    }
+
+    public SinglyLinkedCircularList copy() {
+    	SinglyLinkedCircularList copy = new SinglyLinkedCircularList();
+    	Link start = this.current;
+    	do {
+            copy.add(this.get());
+            copy.step();
+        } while (start != this.next());
+        return copy;
     }
 
     private static final class Link {
