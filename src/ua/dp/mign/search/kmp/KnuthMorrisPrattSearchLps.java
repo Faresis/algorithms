@@ -66,5 +66,10 @@ public class KnuthMorrisPrattSearchLps {
     lps = buildLps(word);
     System.out.println("Word: " + Arrays.toString(word));
     System.out.println("Lps: " + Arrays.toString(lps));
+
+    word = new char[] {'a', 'c', 'a', 'c', 'a', 'b', 'a', 'c', 'a', 'c', 'a', 'b', 'a', 'c', 'a', 'c', 'a', 'c'};
+    lps = buildLps(word);
+    System.out.println("Word: " + Arrays.toString(word));
+    System.out.println("Lps: " + Arrays.toString(lps));
   }
 }
