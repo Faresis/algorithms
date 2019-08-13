@@ -132,6 +132,15 @@ class TspApp {
     Map<String, Integer> routes = new HashMap<>();
     theGraph.anagram(4, g -> routes.put(g.getRoute(), g.getDistance()));
     System.out.println(routes);
+
+    Map.Entry<String, Integer> min = null;
+    for (Map.Entry<String, Integer> current : routes.entrySet()) {
+      if (current.getValue() < 0) continue;
+      if (min == null || current.getValue() < min.getValue()) {
+        min = current;
+      }
+    }
+    System.out.println("Minimal distance route: " + min.getKey() + " " + min.getValue());
   }  // end main()
 }  // end class PathApp
 ////////////////////////////////////////////////////////////////
